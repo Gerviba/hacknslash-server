@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.pojo.ServerListInfoResponse;
 
-@Profile(ConfigProfile.AUTH_SERVER)
+@Profile(ConfigProfile.GAME_SERVER)
 @RestController
 @RequestMapping("/api/connect/")
 public class ConnectController {

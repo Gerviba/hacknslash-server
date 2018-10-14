@@ -1,4 +1,4 @@
-package hu.gerviba.hacknslash.backend.model;
+package hu.gerviba.hacknslash.backend.pojo.game;
 
 public class MapPojo {
 

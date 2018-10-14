@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.context.annotation.Profile;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
