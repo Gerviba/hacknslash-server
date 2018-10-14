@@ -1,6 +1,5 @@
 package hu.gerviba.hacknslash.backend.pojo.auth;
 
-import hu.gerviba.hacknslash.backend.pojo.SimpleStatusResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

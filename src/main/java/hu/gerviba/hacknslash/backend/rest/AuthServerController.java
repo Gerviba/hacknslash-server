@@ -14,7 +14,7 @@ import hu.gerviba.hacknslash.backend.pojo.auth.LoginRequest;
 import hu.gerviba.hacknslash.backend.pojo.auth.LoginResponse;
 import hu.gerviba.hacknslash.backend.pojo.auth.RegisterRequest;
 import hu.gerviba.hacknslash.backend.pojo.auth.RegistrationResponse;
-import hu.gerviba.hacknslash.backend.pojo.auth.ValidateRequest;
+import hu.gerviba.hacknslash.backend.pojo.auth.ValidationRequest;
 import hu.gerviba.hacknslash.backend.pojo.auth.ValidationResponse;
 import hu.gerviba.hacknslash.backend.services.AuthService;
 
@@ -32,7 +32,7 @@ public class AuthServerController {
     }
     
     @PostMapping("/validate")
-    ValidationResponse validate(@RequestBody ValidateRequest data, HttpServletRequest request) {
+    ValidationResponse validate(@RequestBody ValidationRequest data, HttpServletRequest request) {
         return auth.checkSession(data.getSessionId(), request.getRemoteAddr());
     }
     

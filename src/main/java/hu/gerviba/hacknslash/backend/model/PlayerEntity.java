@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -14,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -21,17 +20,18 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "players")
+@NoArgsConstructor
 @ToString
 public class PlayerEntity implements Serializable {
 
     @Id
     @Column
     @Getter
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
-
     @Setter
+    private String id;
+
     @Getter
+    @Setter
     @Transient
     private String name;
 
@@ -39,7 +39,7 @@ public class PlayerEntity implements Serializable {
     @Getter
     @Setter
     private Long exp;
-    
+
     @Transient
     @Getter
     @Setter
@@ -69,12 +69,12 @@ public class PlayerEntity implements Serializable {
     @Getter
     @Setter
     private Integer statMagic;
-    
+
     @Transient
     @Getter
     @Setter
     private double hp;
-    
+
     @Transient
     @Getter
     @Setter
@@ -89,12 +89,14 @@ public class PlayerEntity implements Serializable {
     @Getter
     @Setter
     private double x;
-    
+
     @Transient
     @Getter
     @Setter
     private double y;
-    
-    public PlayerEntity() {}
-    
+
+    public PlayerEntity(String id) {
+        this.id = id;
+    }
+
 }
