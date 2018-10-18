@@ -1,5 +1,6 @@
 package hu.gerviba.hacknslash.backend.services;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,6 +30,10 @@ public class UserStorageService {
     
     public int count() {
         return players.size();
+    }
+    
+    public Collection<PlayerEntity> getAll() {
+        return players.values();
     }
     
 }

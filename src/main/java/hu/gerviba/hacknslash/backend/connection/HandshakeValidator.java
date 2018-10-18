@@ -2,6 +2,7 @@ package hu.gerviba.hacknslash.backend.connection;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,8 @@ public class HandshakeValidator implements HandshakeInterceptor {
 
     public static final String SESSION_ID_ATTRIBUTE = "session-id";
 
+    private static AtomicLong ENTITY_ID_AUTO_INCREMENT = new AtomicLong(0);
+    
     @Autowired
     RestTemplate restTemplate;
     
@@ -69,14 +72,13 @@ public class HandshakeValidator implements HandshakeInterceptor {
                 // TODO: Ne léphessenek be egy sessionID-vel többen
                 
                 Optional<PlayerEntity> player = players.findById(validation.getUser().getUuid());
-                if (!player.isPresent()) {
-                    PlayerEntity entity = new PlayerEntity(validation.getUser().getUuid());
-                    entity.setName(validation.getUser().getName());
-                    players.save(entity);
-                    users.addPlayer(sessionId, entity);
-                } else {
-                    users.addPlayer(sessionId, player.get());
-                }
+                
+                PlayerEntity entity = player.isPresent() ? player.get() : new PlayerEntity(validation.getUser().getUuid());
+                entity.setEntityId(ENTITY_ID_AUTO_INCREMENT.getAndIncrement());
+                entity.setName(validation.getUser().getName());
+                players.save(entity);
+                users.addPlayer(sessionId, entity);
+                
                 log.info("Session validated. User authenticated.");
                 return true;
             } else {

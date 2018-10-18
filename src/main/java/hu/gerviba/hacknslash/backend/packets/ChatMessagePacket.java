@@ -1,10 +1,10 @@
 package hu.gerviba.hacknslash.backend.packets;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@ToString
+@Data
+@AllArgsConstructor
 public class ChatMessagePacket {
 
     public static enum MessageType {
@@ -15,33 +15,14 @@ public class ChatMessagePacket {
         ANNOUNCEMENT,
         JOIN,
         LEAVE,
-        ;
+        ACTION,
+        WARNING,
+        SERVER
     }
 
-    @Getter
-    @Setter
-    MessageType type;
-    
-    @Getter
-    @Setter
-    String sender;
-
-    @Getter
-    @Setter
-    String target;
-    
-    @Getter
-    @Setter
-    String message;
-
-    public ChatMessagePacket() {
-    }
-    
-    public ChatMessagePacket(MessageType type, String sender, String target, String message) {
-        this.type = type;
-        this.sender = sender;
-        this.target = target;
-        this.message = message;
-    }
+    private MessageType type;
+    private String sender;
+    private String target;
+    private String message;
     
 }
