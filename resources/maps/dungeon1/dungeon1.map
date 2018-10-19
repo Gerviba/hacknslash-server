@@ -1,0 +1,30 @@
+# Meta
+META DISPLAY_NAME Demo Dungeon
+META AUTHOR Gerviba
+META VERSION 1.0
+META TEXTURE tileset_64
+META SPAWN 9 2
+
+# File requirements (client side)
+REQUIRE /assets/textures/tileset.png
+# REQUIRE /assets/mobs/skeleton.png
+# REQUIRE /assets/things/torch.png
+
+# Foreground and background
+BACKGROUND dungeon1.bg
+
+# Regions
+REGIONS dungeon1.rg
+
+# Portals
+PORTALS dungeon1.pt
+
+# Mobs, Permanent entities, NPCs
+LOAD /resources/mobs/skeleton_1.mob 1
+LOAD /resources/things/torch_1.thing 2
+
+# MOB <ID> <X> <Y> <RESAWN> 
+MOB 1 20 20 20000
+
+# THING <ID> <X> <Y>
+THING 2 10 50

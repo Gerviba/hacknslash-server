@@ -1,17 +1,11 @@
 package hu.gerviba.hacknslash.backend.connection;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -43,7 +37,8 @@ public class WebSocketEventListener {
     @EventListener
     public void handleConnected(SessionConnectedEvent event) {
         int start = (event.getMessage().toString()).indexOf("{session-id=");
-        String sessionId = (event.getMessage().toString()).substring(start + 12, (event.getMessage().toString()).indexOf("}", start));
+        String sessionId = (event.getMessage().toString())
+                .substring(start + 12, (event.getMessage().toString()).indexOf("}", start));
         log.info("Received a new web socket connection: " + sessionId);
         PlayerEntity player = users.getPlayer(sessionId);
         messaging.convertAndSend("/topic/chat", 
@@ -66,5 +61,5 @@ public class WebSocketEventListener {
     public void handleSubscribe(SessionSubscribeEvent event) {
         log.info("Subscribe: " + event.getMessage());
     }
-    
+
 }

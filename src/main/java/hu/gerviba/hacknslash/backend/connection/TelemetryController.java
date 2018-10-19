@@ -34,6 +34,12 @@ public class TelemetryController {
         users.getPlayer((String) header.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE))
                 .update(telemetry);
     }
+
+    @MessageMapping("/map.connect")
+    void mapConnect(@Payload TelemetryUpdatePacket telemetry, SimpMessageHeaderAccessor header) {
+        users.getPlayer((String) header.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE))
+                .update(telemetry);
+    }
     
     @Scheduled(fixedRate = 50)
     void updateTelemetry() {
@@ -43,4 +49,5 @@ public class TelemetryController {
                 .collect(Collectors.toList()));
         users.getAll().forEach(user -> messaging.convertAndSend("/topic/telemetry", packet));
     }
+    
 }

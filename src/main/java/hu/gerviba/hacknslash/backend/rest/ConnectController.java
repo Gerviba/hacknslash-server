@@ -33,7 +33,7 @@ public class ConnectController {
     
     @GetMapping("/info")
     ServerListInfoResponse info() {
-        return new ServerListInfoResponse(name, motd, users.count(), maxUsers, icon);
+        return new ServerListInfoResponse(name, motd, users.countPlayers(), maxUsers, icon);
     }
     
 }
