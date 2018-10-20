@@ -61,7 +61,7 @@ public class MapLoaderConfiguration {
                         map.setMapLoadPacket(loadMapLoadPacket(
                                 map.getStoreName(), map.getDisplayName(), 
                                 map.getTexture(), mapFile.getParent() + "/" + params[1],
-                                map.getSpawnX(), map.getSpawnY()));
+                                map.getSpawnX(), map.getSpawnY(), map.getBackgroundColor()));
                     }
                 } catch (Exception e) {
                     log.error("Failed to load map: " + map.getStoreName());
@@ -76,6 +76,7 @@ public class MapLoaderConfiguration {
         String texture = "na";
         int spawnX = 0;
         int spawnY = 0;
+        String backgroundColor = "000000";
         
         List<String[]> meta = lines.stream()
                 .filter(line -> line.startsWith("META "))
@@ -91,18 +92,20 @@ public class MapLoaderConfiguration {
             } else if (params[0].equalsIgnoreCase("SPAWN")) {
                 spawnX = Integer.parseInt(params[1].split("[ \\t]+")[0]);
                 spawnY = Integer.parseInt(params[1].split("[ \\t]+")[1]);
+            } else if (params[0].equalsIgnoreCase("BACKGROUND_COLOR")) {
+                backgroundColor = params[1];
             }
         }
         
-        return new MapPojo(name, displayName, texture, spawnX, spawnY);
+        return new MapPojo(name, displayName, texture, spawnX, spawnY, backgroundColor);
     }
     
     private MapLoadPacket loadMapLoadPacket(String name, String displayName, 
-            String texture, String fileName, int x, int y) throws IOException {
+            String texture, String fileName, int x, int y, String color) throws IOException {
         return new MapLoadPacket(name, displayName, texture, x, y, 
                 loadMapLayer(LayerType.FOREGROUND, fileName),
                 loadMapLayer(LayerType.BACKGROUND, fileName),
-                loadMapLayer(LayerType.MIDDLE, fileName));
+                loadMapLayer(LayerType.MIDDLE, fileName), color);
     }
     
     private MapLayerInfo loadMapLayer(LayerType layer, String fileName) throws IOException {

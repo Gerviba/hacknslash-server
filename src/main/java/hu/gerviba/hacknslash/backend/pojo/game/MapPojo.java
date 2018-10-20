@@ -18,6 +18,7 @@ public class MapPojo {
     private MapLoadPacket mapLoadPacket;
     private final int spawnX;
     private final int spawnY;
+    private final String backgroundColor;
     
     private final Map<String, PlayerEntity> players = new ConcurrentHashMap<>();
     

@@ -48,6 +48,6 @@ public class MapLoadPacket {
     private MapLayerInfo foreground;
     private MapLayerInfo background;
     private MapLayerInfo middle;
-    
+    private String backgroundColor;
     
 }

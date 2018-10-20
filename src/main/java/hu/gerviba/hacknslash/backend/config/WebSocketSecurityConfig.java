@@ -2,10 +2,7 @@ package hu.gerviba.hacknslash.backend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 
@@ -23,16 +20,9 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
                 //.anyMessage().authenticated();
                 .anyMessage().permitAll();
     }
-
+    
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.configureBrokerChannel().interceptors(new ChannelInterceptor() {
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//                System.out.println("Pre message: " + message);
-                return ChannelInterceptor.super.preSend(message, channel);
-            }
-        });
     }
 
     @Override

@@ -4,6 +4,7 @@ META AUTHOR Gerviba
 META VERSION 1.0
 META TEXTURE tileset_64
 META SPAWN 9 2
+META BACKGROUND_COLOR 4E4A4E
 
 # File requirements (client side)
 REQUIRE /assets/textures/tileset.png

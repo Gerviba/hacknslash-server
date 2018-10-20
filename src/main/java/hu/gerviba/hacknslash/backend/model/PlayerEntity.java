@@ -1,6 +1,7 @@
 package hu.gerviba.hacknslash.backend.model;
 
 import java.io.Serializable;
+import java.security.Principal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "players")
 @NoArgsConstructor
 @Data
-public class PlayerEntity implements Serializable {
+public class PlayerEntity implements Serializable, Principal {
 
     @Id
     @Column
@@ -32,6 +33,9 @@ public class PlayerEntity implements Serializable {
 
     @Transient
     private String name;
+    
+    @Transient
+    private String sessionId;
 
     @Column
     @JsonIgnore

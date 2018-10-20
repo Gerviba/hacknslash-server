@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class HandshakeValidator implements HandshakeInterceptor {
 
+    private static final String CLIENT_SIDE_SESSION_ID_ATTRIBUTE = "hns-session-id";
     public static final String SESSION_ID_ATTRIBUTE = "session-id";
 
     private static AtomicLong ENTITY_ID_AUTO_INCREMENT = new AtomicLong(0);
@@ -53,14 +54,14 @@ public class HandshakeValidator implements HandshakeInterceptor {
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
             
-            if (servletRequest.getHeaders().get("hns-session-id") == null 
-                    || servletRequest.getHeaders().get("hns-session-id").isEmpty()) {
+            if (servletRequest.getHeaders().get(CLIENT_SIDE_SESSION_ID_ATTRIBUTE) == null 
+                    || servletRequest.getHeaders().get(CLIENT_SIDE_SESSION_ID_ATTRIBUTE).isEmpty()) {
                 log.info("Session id not present " + servletRequest.getRemoteAddress().getAddress().toString());
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return false;
             }
             
-            String sessionId = servletRequest.getHeaders().get("hns-session-id").get(0);
+            String sessionId = servletRequest.getHeaders().get(CLIENT_SIDE_SESSION_ID_ATTRIBUTE).get(0);
             
             // FIXME: Ez így IO blocking:
             ValidationResponse validation = restTemplate.postForObject(authServerUrl + "/auth/validate", 
@@ -73,9 +74,12 @@ public class HandshakeValidator implements HandshakeInterceptor {
                 
                 Optional<PlayerEntity> player = players.findById(validation.getUser().getUuid());
                 
-                PlayerEntity entity = player.isPresent() ? player.get() : new PlayerEntity(validation.getUser().getUuid());
+                PlayerEntity entity = player.isPresent() 
+                        ? player.get() 
+                        : new PlayerEntity(validation.getUser().getUuid());
                 entity.setEntityId(ENTITY_ID_AUTO_INCREMENT.getAndIncrement());
                 entity.setName(validation.getUser().getName());
+                entity.setSessionId(sessionId);
                 players.save(entity);
                 users.addPlayer(sessionId, entity);
                 
@@ -97,4 +101,5 @@ public class HandshakeValidator implements HandshakeInterceptor {
         log.debug("AFTER HANDSHAKE");
         
     }
+    
 }

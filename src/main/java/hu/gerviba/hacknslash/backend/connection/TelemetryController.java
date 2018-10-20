@@ -8,11 +8,13 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
+import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
 import hu.gerviba.hacknslash.backend.packets.TelemetryPacket;
 import hu.gerviba.hacknslash.backend.packets.TelemetryPacket.PlayerModelStatus;
 import hu.gerviba.hacknslash.backend.packets.TelemetryUpdatePacket;
@@ -35,10 +37,11 @@ public class TelemetryController {
                 .update(telemetry);
     }
 
-    @MessageMapping("/map.connect")
-    void mapConnect(@Payload TelemetryUpdatePacket telemetry, SimpMessageHeaderAccessor header) {
-        users.getPlayer((String) header.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE))
-                .update(telemetry);
+    @MessageMapping("/connected")
+    @SendToUser("/topic/map")
+    MapLoadPacket mapConnect(@Payload TelemetryUpdatePacket telemetry, SimpMessageHeaderAccessor header) {
+//        users.getPlayer((String) header.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
+        return users.getMap("dungeon1").getMapLoadPacket();
     }
     
     @Scheduled(fixedRate = 50)
@@ -47,7 +50,8 @@ public class TelemetryController {
         packet.setPlayers(users.getAll().stream()
                 .map(user -> new PlayerModelStatus(user))
                 .collect(Collectors.toList()));
-        users.getAll().forEach(user -> messaging.convertAndSend("/topic/telemetry", packet));
+        users.getAll().forEach(user -> messaging
+                .convertAndSendToUser(user.getSessionId(), "/topic/telemetry", packet));
     }
     
 }
