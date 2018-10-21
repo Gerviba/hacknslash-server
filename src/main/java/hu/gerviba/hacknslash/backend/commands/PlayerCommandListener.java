@@ -10,17 +10,17 @@ import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket.MessageType;
 public class PlayerCommandListener {
 
     @Autowired
-    SimpMessagingTemplate simpMessagingTemplate;
+    SimpMessagingTemplate outgoing;
     
     @CommandHandler("ping")
     void ping(PlayerEntity player, String[] args) {
-        simpMessagingTemplate.convertAndSendToUser(player.getSessionId(), "/topic/chat", 
+        outgoing.convertAndSendToUser(player.getSessionId(), "/topic/chat", 
                 new ChatMessagePacket(MessageType.ANNOUNCEMENT, "PING-CMD", "ALL", "Pong!"));
     }
     
     @CommandHandler("coords")
     void coords(PlayerEntity player, String[] args) {
-        simpMessagingTemplate.convertAndSendToUser(player.getSessionId(), "/topic/chat", 
+        outgoing.convertAndSendToUser(player.getSessionId(), "/topic/chat", 
                 new ChatMessagePacket(MessageType.ANNOUNCEMENT, "PING-CMD", "ALL", 
                         player.getX() + ", " + player.getY()));
     }

@@ -80,6 +80,7 @@ public class HandshakeValidator implements HandshakeInterceptor {
                 entity.setEntityId(ENTITY_ID_AUTO_INCREMENT.getAndIncrement());
                 entity.setName(validation.getUser().getName());
                 entity.setSessionId(sessionId);
+                entity.setHp(entity.getMaxHp());
                 players.save(entity);
                 users.addPlayer(sessionId, entity);
                 

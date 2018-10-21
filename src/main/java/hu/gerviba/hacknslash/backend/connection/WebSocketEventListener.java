@@ -43,7 +43,6 @@ public class WebSocketEventListener {
         PlayerEntity player = users.getPlayer(sessionId);
         messaging.convertAndSend("/topic/chat", 
                 new ChatMessagePacket(MessageType.JOIN, "SERVER", "ALL", player.getName() + " joined the server"));
-//        messaging.convertAndSendToUser(event.getUser().getName(), "/topic/info", null);
     }
     
     @EventListener

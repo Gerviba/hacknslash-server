@@ -31,6 +31,7 @@ public class CommandService {
     @PostConstruct
     public void loadCommands() {
         registerListener(new PlayerCommandListener());
+        registerListener(new DebugCommandListener());
     }
 
     public void registerListener(Object listener) {
@@ -54,7 +55,6 @@ public class CommandService {
                         });
                 log.info("New command registered: /" 
                         + m.getAnnotation(CommandHandler.class).value().toLowerCase());
-                
             }
         }
     }
