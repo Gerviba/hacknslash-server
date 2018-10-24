@@ -74,8 +74,8 @@ public class MapLoaderConfiguration {
     private MapPojo loadMeta(List<String> lines, String name) throws IOException {
         String displayName = name;
         String texture = "na";
-        int spawnX = 0;
-        int spawnY = 0;
+        double spawnX = 0;
+        double spawnY = 0;
         String backgroundColor = "000000";
         
         List<String[]> meta = lines.stream()
@@ -90,8 +90,8 @@ public class MapLoaderConfiguration {
             } else if (params[0].equalsIgnoreCase("TEXTURE")) {
                 texture = params[1];
             } else if (params[0].equalsIgnoreCase("SPAWN")) {
-                spawnX = Integer.parseInt(params[1].split("[ \\t]+")[0]);
-                spawnY = Integer.parseInt(params[1].split("[ \\t]+")[1]);
+                spawnX = Double.parseDouble(params[1].split("[ \\t]+")[0]);
+                spawnY = Double.parseDouble(params[1].split("[ \\t]+")[1]);
             } else if (params[0].equalsIgnoreCase("BACKGROUND_COLOR")) {
                 backgroundColor = params[1];
             }
@@ -101,7 +101,7 @@ public class MapLoaderConfiguration {
     }
     
     private MapLoadPacket loadMapLoadPacket(String name, String displayName, 
-            String texture, String fileName, int x, int y, String color) throws IOException {
+            String texture, String fileName, double x, double y, String color) throws IOException {
         return new MapLoadPacket(name, displayName, texture, x, y, 
                 loadMapLayer(LayerType.FOREGROUND, fileName),
                 loadMapLayer(LayerType.BACKGROUND, fileName),
