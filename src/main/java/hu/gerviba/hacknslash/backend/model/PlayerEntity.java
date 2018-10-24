@@ -133,4 +133,11 @@ public class PlayerEntity implements Serializable, Principal {
         return EXPS_PER_LEVEL.get(level);
     }
     
+    public void setMana(double mana) {
+        this.mana = Math.min(mana, maxMana);
+    }
+
+    public void setHp(double hp) {
+        this.hp = Math.min(hp, maxHp);
+    }
 }

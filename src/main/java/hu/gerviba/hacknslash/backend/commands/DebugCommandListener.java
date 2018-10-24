@@ -1,20 +1,19 @@
 package hu.gerviba.hacknslash.backend.commands;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
-import hu.gerviba.hacknslash.backend.packets.SelfInfoUpdatePacket;
+import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 
 public class DebugCommandListener {
 
     @Autowired
-    SimpMessagingTemplate outgoing;
+    GlobalPacketService packets;
     
     @CommandHandler("damage")
     void ping(PlayerEntity player, String[] args) {
         player.setHp(player.getHp() - 10);
-        outgoing.convertAndSendToUser(player.getSessionId(), "/topic/self", new SelfInfoUpdatePacket(player));
+        packets.sendSelfUpdate(player);
     }
     
 }

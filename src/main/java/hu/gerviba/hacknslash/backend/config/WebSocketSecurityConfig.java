@@ -16,7 +16,13 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
         messages
                 // users cannot send to these broker destinations, only the application can
-                .simpMessageDestMatchers("/topic/chat", "/topic/action", "/topic/map", "/topic/telemetry").denyAll()
+                .simpMessageDestMatchers(
+                        "/topic/chat", 
+                        "/topic/action", 
+                        "/topic/map", 
+                        "/topic/telemetry", 
+                        "/topic/skills"
+                        ).denyAll()
                 //.anyMessage().authenticated();
                 .anyMessage().permitAll();
     }
