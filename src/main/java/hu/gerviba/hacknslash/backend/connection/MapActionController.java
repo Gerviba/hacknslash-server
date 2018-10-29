@@ -16,8 +16,11 @@ import org.springframework.stereotype.Controller;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
+import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket.MessageType;
+import hu.gerviba.hacknslash.backend.packets.ItemChangeUpdatePacket;
 import hu.gerviba.hacknslash.backend.packets.SkillPacket;
 import hu.gerviba.hacknslash.backend.packets.SkillRequestPacket;
+import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 import hu.gerviba.hacknslash.backend.skill.HealthPotion;
 import hu.gerviba.hacknslash.backend.skill.ManaPotion;
@@ -32,6 +35,9 @@ public class MapActionController {
     
     @Autowired 
     AutowireCapableBeanFactory beanFactory;
+    
+    @Autowired
+    GlobalPacketService packets;
     
     private Map<Integer, Skill> skills = new ConcurrentHashMap<>();
     
@@ -50,7 +56,7 @@ public class MapActionController {
     
     @MessageMapping("/skills")
     @SendTo("/topic/skills")
-    SkillPacket mapConnect(@Payload SkillRequestPacket skill, SimpMessageHeaderAccessor header) {
+    SkillPacket skill(@Payload SkillRequestPacket skill, SimpMessageHeaderAccessor header) {
         PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()
                 .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
         
@@ -58,6 +64,19 @@ public class MapActionController {
             this.skills.get(skill.getSkillUid()).apply(pe, pe.getX() / 64, pe.getY() / 64, pe.getDirection());
             
         return new SkillPacket(skill.getSkillUid(), pe.getDirection(), pe.getX() / 64, pe.getY() / 64);
+    }
+    
+    @MessageMapping("/switch-item")
+    void switchItem(@Payload ItemChangeUpdatePacket change, SimpMessageHeaderAccessor header) {
+        PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()
+                .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
+        
+        if (pe.getInventory().change(change.getSlotFrom(), change.getSlotTo())) {
+            pe.updateAppearance();
+        } else {
+            packets.sendPrivateMessage(pe, MessageType.WARNING, "Invalid item swap!");
+            packets.sendFullInventoryUpdate(pe);
+        }
     }
     
 }

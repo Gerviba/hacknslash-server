@@ -21,6 +21,12 @@ public class TelemetryPacket {
         private boolean walking;
         private float hp;
         
+        private String base;
+        private String weapon;
+        private String helmet;
+        private String armor;
+        private String boots;
+        
         public PlayerModelStatus(PlayerEntity user) {
             this.name = user.getName();
             this.entityId = user.getEntityId();
@@ -29,6 +35,12 @@ public class TelemetryPacket {
             this.direction = user.getDirection();
             this.walking = user.isWalking();
             this.hp = (float) (user.getHp() / user.getMaxHp());
+            
+            this.base = user.getBase();
+            this.weapon = user.getWeapon();
+            this.helmet = user.getHelmet();
+            this.armor = user.getArmor();
+            this.boots = user.getBoots();
         }
     }
         

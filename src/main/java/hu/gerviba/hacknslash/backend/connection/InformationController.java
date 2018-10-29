@@ -12,13 +12,10 @@ import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.SelfInfoUpdatePacket;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Profile(ConfigProfile.GAME_SERVER)
 @Controller
 public class InformationController {
-
     
     @Autowired
     SimpMessagingTemplate messaging;
@@ -31,8 +28,7 @@ public class InformationController {
     SelfInfoUpdatePacket sendMessage(SimpMessageHeaderAccessor header) {
         PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()
                 .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
-        log.info("Requested self info");
-        System.out.println(pe);
+        pe.updateAppearance();
         return new SelfInfoUpdatePacket(pe);
     }
     

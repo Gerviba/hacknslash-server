@@ -2,11 +2,14 @@ package hu.gerviba.hacknslash.backend.model;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -15,6 +18,8 @@ import org.springframework.context.annotation.Profile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
+import hu.gerviba.hacknslash.backend.item.Inventory;
+import hu.gerviba.hacknslash.backend.item.InventoryConverter;
 import hu.gerviba.hacknslash.backend.packets.TelemetryUpdatePacket;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -79,10 +84,10 @@ public class PlayerEntity implements Serializable, Principal {
     private Integer statMagic;
 
     @Transient
-    private double hp;
+    private volatile double hp;
 
     @Transient
-    private double mana;
+    private volatile double mana;
 
     @Column
     @JsonIgnore
@@ -92,18 +97,38 @@ public class PlayerEntity implements Serializable, Principal {
     private long entityId;
     
     @Transient
-    private double x;
+    private volatile double x;
 
     @Transient
-    private double y;
+    private volatile double y;
     
     // TODO: Eztszámolja ki delta -> fokok alapján
     @Transient
-    private int direction;
+    private volatile int direction;
     
     // TODO: Eztszámolja ki delta -> fokok alapján
     @Transient
-    private boolean walking;
+    private volatile boolean walking;
+
+    @Column
+    private volatile String base;
+    
+    @Transient
+    private volatile String weapon = "null";
+    
+    @Transient
+    private volatile String helmet = "null";
+    
+    @Transient
+    private volatile String armor = "null";
+    
+    @Transient
+    private volatile String boots = "null";
+
+    @Column
+    @Lob
+    @Convert(converter = InventoryConverter.class)
+    private Inventory inventory;
 
     public PlayerEntity(String id) {
         this.id = id;
@@ -114,6 +139,12 @@ public class PlayerEntity implements Serializable, Principal {
         this.exp = 0;
         this.money = 0;
         this.level = 1;
+        this.base = "player_no1";
+        this.weapon = "null";
+        this.helmet = "null";
+        this.armor = "null";
+        this.boots = "null";
+        this.inventory = new Inventory(new HashMap<>());
     }
 
     public void update(TelemetryUpdatePacket telemetry) {
@@ -122,7 +153,7 @@ public class PlayerEntity implements Serializable, Principal {
         this.direction = telemetry.getDirection();
         this.walking = telemetry.isWalking();
     }
-
+    
     private static ConcurrentHashMap<Integer, Integer> EXPS_PER_LEVEL = new ConcurrentHashMap<>();
     
     public int getMaxExp() {
@@ -140,4 +171,12 @@ public class PlayerEntity implements Serializable, Principal {
     public void setHp(double hp) {
         this.hp = Math.min(hp, maxHp);
     }
+
+    public void updateAppearance() {
+        this.weapon = inventory.getWeapon();
+        this.helmet = inventory.getHelmet();
+        this.armor = inventory.getArmor();
+        this.boots = inventory.getBoots();
+    }
+    
 }

@@ -14,9 +14,6 @@ REQUIRE /assets/textures/tileset.png
 # Foreground and background
 BACKGROUND dungeon1.bg
 
-# Regions
-REGIONS dungeon1.rg
-
 # Portals
 PORTALS dungeon1.pt
 

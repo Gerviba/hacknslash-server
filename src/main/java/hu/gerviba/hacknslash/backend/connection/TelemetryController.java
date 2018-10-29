@@ -14,10 +14,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
+import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
 import hu.gerviba.hacknslash.backend.packets.TelemetryPacket;
 import hu.gerviba.hacknslash.backend.packets.TelemetryPacket.PlayerModelStatus;
 import hu.gerviba.hacknslash.backend.packets.TelemetryUpdatePacket;
+import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 
 @Profile(ConfigProfile.GAME_SERVER)
@@ -30,17 +32,23 @@ public class TelemetryController {
     
     @Autowired
     UserStorageService users;
+
+    @Autowired
+    GlobalPacketService packets;
     
     @MessageMapping("/telemetry")
     void sendTelemetry(@Payload TelemetryUpdatePacket telemetry, SimpMessageHeaderAccessor header) {
-        users.getPlayer((String) header.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE))
+        users.getPlayer((String) header.getSessionAttributes()
+                .get(HandshakeValidator.SESSION_ID_ATTRIBUTE))
                 .update(telemetry);
     }
 
     @MessageMapping("/connected")
     @SendToUser("/topic/map")
     MapLoadPacket mapConnect(@Payload TelemetryUpdatePacket telemetry, SimpMessageHeaderAccessor header) {
-//        users.getPlayer((String) header.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
+        PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()
+                .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
+        packets.sendFullInventoryUpdate(pe);
         return users.getMap("dungeon1").getMapLoadPacket();
     }
     
