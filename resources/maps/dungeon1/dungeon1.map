@@ -22,7 +22,9 @@ LOAD /resources/mobs/skeleton_1.mob 1
 LOAD /resources/things/torch_1.thing 2
 
 # MOB <ID> <X> <Y> <RESAWN> 
-MOB 1 20 20 20000
+#MOB 1 20 20 20000
 
-# THING <ID> <X> <Y>
-THING 2 10 50
+# OBJ <texture> <x> <y> <anchor(unused)> <action>
+OBJ chest1 20 3 0 add:eye/3
+OBJ chest1 23 7 0 add:bone/2
+OBJ chest2 5 7 0 add:all_items

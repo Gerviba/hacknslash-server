@@ -14,7 +14,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("gerviba@gerviba.hu").password("12345")
+                .withUser("test@email.com").password("12345")
                 .authorities("ROLE_USER");
     }
  
@@ -24,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/index.html", "/", "/ws.js").permitAll() // DEBUG
+                .antMatchers("/index.html", "/", "/ws.js").permitAll() // TODO: DEBUG (remove)
                 .antMatchers("/api/**").permitAll()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/game/**").permitAll()

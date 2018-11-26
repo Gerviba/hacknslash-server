@@ -1,0 +1,5 @@
+# Inmap jumps
+JUMP 10 20 9 3
+
+# Out of map jumps
+MAP 20 20 dungeon2 1 2

@@ -14,6 +14,7 @@ import hu.gerviba.hacknslash.backend.commands.CommandService;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket;
 import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket.MessageType;
+import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +32,9 @@ public class ChatController {
     @Autowired
     CommandService commands;
     
+    @Autowired
+    CustomLoggingService logger;
+    
     @MessageMapping("/chat")
     @SendTo("/topic/chat")
     ChatMessagePacket sendMessage(@Payload ChatMessagePacket chatMessage, SimpMessageHeaderAccessor header) {
@@ -47,6 +51,7 @@ public class ChatController {
         }
 
         log.info("Chat message from " + pe.getName() + ": " + chatMessage.getMessage());
+        logger.info("Chat message from " + pe.getName() + ": " + chatMessage.getMessage());
         chatMessage.setType(ChatMessagePacket.MessageType.CHAT);
         chatMessage.setMessage(chatMessage.getSender() + ": " + chatMessage.getMessage());
         return chatMessage;

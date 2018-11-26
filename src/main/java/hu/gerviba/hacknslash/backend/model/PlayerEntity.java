@@ -91,7 +91,7 @@ public class PlayerEntity implements Serializable, Principal {
 
     @Column
     @JsonIgnore
-    private String map;
+    private String map = "dungeon1";
     
     @Transient
     private long entityId;
@@ -144,6 +144,7 @@ public class PlayerEntity implements Serializable, Principal {
         this.helmet = "null";
         this.armor = "null";
         this.boots = "null";
+        this.map = "dungeon1";
         this.inventory = new Inventory(new HashMap<>());
     }
 

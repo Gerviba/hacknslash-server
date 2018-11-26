@@ -22,6 +22,7 @@ import hu.gerviba.hacknslash.backend.pojo.auth.AuthStatus;
 import hu.gerviba.hacknslash.backend.pojo.auth.ValidationRequest;
 import hu.gerviba.hacknslash.backend.pojo.auth.ValidationResponse;
 import hu.gerviba.hacknslash.backend.repos.PlayerRepository;
+import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,6 +47,9 @@ public class HandshakeValidator implements HandshakeInterceptor {
 
     @Autowired
     PlayerRepository players;
+    
+    @Autowired
+    CustomLoggingService logger;
     
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
@@ -84,10 +88,12 @@ public class HandshakeValidator implements HandshakeInterceptor {
                 players.save(entity);
                 users.addPlayer(sessionId, entity);
                 
-                log.info("Session validated. User authenticated.");
+                log.info("Session validated. User " + entity.getName() + " authenticated.");
+                logger.info("A new user " + entity.getName() + " logged in.");
                 return true;
             } else {
-                log.info("Session invalid.");
+                log.info("Session invalid from " + request.getRemoteAddress().getHostName());
+                logger.warning("Session invalid from " + request.getRemoteAddress().getHostName());
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return false;
             }
@@ -99,7 +105,6 @@ public class HandshakeValidator implements HandshakeInterceptor {
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                WebSocketHandler wsHandler, Exception ex) {
-        log.debug("AFTER HANDSHAKE");
         
     }
     

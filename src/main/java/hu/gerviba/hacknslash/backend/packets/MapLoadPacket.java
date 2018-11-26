@@ -40,6 +40,17 @@ public class MapLoadPacket {
         
     }
 
+    @Data
+    @AllArgsConstructor
+    public static class StaticObjectInfo {
+
+        private String texture;
+        private double x;
+        private double y;
+        private double anchor;
+        
+    }
+    
     private String name;
     private String displayName;
     private String texture;
@@ -49,5 +60,6 @@ public class MapLoadPacket {
     private MapLayerInfo background;
     private MapLayerInfo middle;
     private String backgroundColor;
+    private List<StaticObjectInfo> objects;
     
 }

@@ -2,10 +2,8 @@ package hu.gerviba.hacknslash.backend.packets;
 
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class SelfInfoUpdatePacket {
     
     private long entityId; 

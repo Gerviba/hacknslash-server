@@ -1,7 +1,5 @@
 package hu.gerviba.hacknslash.backend.connection;
 
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -16,9 +14,8 @@ import org.springframework.stereotype.Controller;
 import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
-import hu.gerviba.hacknslash.backend.packets.TelemetryPacket;
-import hu.gerviba.hacknslash.backend.packets.TelemetryPacket.PlayerModelStatus;
 import hu.gerviba.hacknslash.backend.packets.TelemetryUpdatePacket;
+import hu.gerviba.hacknslash.backend.pojo.game.MapPojo;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 
@@ -49,17 +46,15 @@ public class TelemetryController {
         PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()
                 .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
         packets.sendFullInventoryUpdate(pe);
-        return users.getMap("dungeon1").getMapLoadPacket();
+        
+        MapPojo map = users.getMap(pe.getMap());
+        map.addPlayer(pe);
+        return map.getMapLoadPacket();
     }
     
     @Scheduled(fixedRate = 50)
     void updateTelemetry() {
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.setPlayers(users.getAll().stream()
-                .map(user -> new PlayerModelStatus(user))
-                .collect(Collectors.toList()));
-        users.getAll().forEach(user -> messaging
-                .convertAndSendToUser(user.getSessionId(), "/topic/telemetry", packet));
+        users.getMaps().forEach(map -> map.updateTelemetry(messaging));
     }
     
 }

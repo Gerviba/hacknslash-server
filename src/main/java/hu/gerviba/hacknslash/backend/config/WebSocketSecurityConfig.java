@@ -15,7 +15,6 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
         messages
-                // users cannot send to these broker destinations, only the application can
                 .simpMessageDestMatchers(
                         "/topic/chat", 
                         "/topic/action", 

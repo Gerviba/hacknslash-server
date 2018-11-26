@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,11 @@ import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.LayerType;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.MapLayerInfo;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.MapLayerInfo.BackgroundPart;
+import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.StaticObjectInfo;
 import hu.gerviba.hacknslash.backend.pojo.game.MapPojo;
+import hu.gerviba.hacknslash.backend.pojo.game.MobTemplatePojo;
+import hu.gerviba.hacknslash.backend.pojo.game.StaticObjectPojo;
+import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import lombok.extern.slf4j.Slf4j;
 
 @Profile(ConfigProfile.GAME_SERVER)
@@ -30,6 +35,9 @@ public class MapLoaderConfiguration {
 
     @Value("${game.resources-dir:resources}")
     String resourcesDir;
+
+    @Autowired
+    CustomLoggingService logger;
     
     @Bean
     ConcurrentHashMap<String, MapPojo> mapConfig() {
@@ -45,13 +53,19 @@ public class MapLoaderConfiguration {
             }
         }
         
+        maps.values().forEach(MapPojo::init);
         return maps;
     }
 
     private MapPojo loadMap(String name, File mapFile) throws IOException {
         log.info("Loading map: " + name + " (" + mapFile.getAbsolutePath() + ")");
+        logger.info("Loading map: " + name);
         List<String> lines = Files.readAllLines(mapFile.toPath(), StandardCharsets.UTF_8);
         MapPojo map = loadMeta(lines, name);
+        
+        map.addMobs(loadMobs(lines));
+        List<StaticObjectPojo> objects = loadStaticObjects(lines);
+        map.addObjects(objects);
         
         lines.stream()
             .map(line -> line.split("[ \t]+"))
@@ -61,7 +75,8 @@ public class MapLoaderConfiguration {
                         map.setMapLoadPacket(loadMapLoadPacket(
                                 map.getStoreName(), map.getDisplayName(), 
                                 map.getTexture(), mapFile.getParent() + "/" + params[1],
-                                map.getSpawnX(), map.getSpawnY(), map.getBackgroundColor()));
+                                map.getSpawnX(), map.getSpawnY(), map.getBackgroundColor(),
+                                objects));
                     }
                 } catch (Exception e) {
                     log.error("Failed to load map: " + map.getStoreName());
@@ -101,15 +116,25 @@ public class MapLoaderConfiguration {
     }
     
     private MapLoadPacket loadMapLoadPacket(String name, String displayName, 
-            String texture, String fileName, double x, double y, String color) throws IOException {
-        return new MapLoadPacket(name, displayName, texture, x, y, 
-                loadMapLayer(LayerType.FOREGROUND, fileName),
-                loadMapLayer(LayerType.BACKGROUND, fileName),
-                loadMapLayer(LayerType.MIDDLE, fileName), color);
-    }
-    
-    private MapLayerInfo loadMapLayer(LayerType layer, String fileName) throws IOException {
+            String texture, String fileName, double x, double y, String color,
+            List<StaticObjectPojo> objects) throws IOException {
+        
         List<String> lines = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
+        return new MapLoadPacket(name, displayName, texture, x, y, 
+                loadMapLayer(LayerType.FOREGROUND, lines),
+                loadMapLayer(LayerType.BACKGROUND, lines),
+                loadMapLayer(LayerType.MIDDLE, lines), 
+                color, 
+                convertToPacketType(objects));
+    }
+
+    private List<StaticObjectInfo> convertToPacketType(List<StaticObjectPojo> objects) {
+        return objects.stream()
+                .map(StaticObjectPojo::toPacketType)
+                .collect(Collectors.toList());
+    }
+
+    private MapLayerInfo loadMapLayer(LayerType layer, List<String> lines) throws IOException {
         List<BackgroundPart> parts = lines.stream()
                 .filter(line -> line.startsWith("DEF "))
                 .map(line -> line.substring(4).split("[ \t]+", 4))
@@ -151,6 +176,38 @@ public class MapLoaderConfiguration {
                 .filter(part -> part.getPlaces().size() > 0)
                 .filter(part -> !part.getName().equals("NOT_SET"))
                 .collect(Collectors.toList()));
+    }
+    
+    private List<StaticObjectPojo> loadStaticObjects(List<String> lines) {
+        return lines.stream()
+                .filter(line -> line.startsWith("OBJ "))
+                .map(line -> line.substring(4).split("[ \t]+", 5))
+                .filter(params -> params.length == 5)
+                .map(params -> new StaticObjectPojo(params[0], 
+                        Double.parseDouble(params[1]),
+                        Double.parseDouble(params[2]),
+                        Double.parseDouble(params[3]),
+                        params[4]))
+                .peek(sop -> log.info("- Loaded object: " + sop.getTexture() 
+                        + " " + sop.getX() + " " + sop.getY()))
+                .collect(Collectors.toList());
+    }
+    
+    private List<MobTemplatePojo> loadMobs(List<String> lines) {
+        return lines.stream()
+                .filter(line -> line.startsWith("MOB "))
+                .map(line -> line.substring(4).split("[ \t]+", 8))
+                .filter(params -> params.length == 8)
+                .map(params -> new MobTemplatePojo(
+                        params[0].replace('_', ' '), 
+                        Double.parseDouble(params[1]), 
+                        Double.parseDouble(params[2]), 
+                        Double.parseDouble(params[3]),
+                        Integer.parseInt(params[4]),
+                        params[5],
+                        Integer.parseInt(params[6]),
+                        Integer.parseInt(params[7])))
+                .collect(Collectors.toList());
     }
 
     private BackgroundPart getPartByChar(char c, List<BackgroundPart> parts) {

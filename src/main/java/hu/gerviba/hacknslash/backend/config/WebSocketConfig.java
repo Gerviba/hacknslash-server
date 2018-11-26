@@ -16,6 +16,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.connection.HandshakeValidator;
+import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 
 @Profile(ConfigProfile.GAME_SERVER)
 @Configuration
@@ -24,6 +25,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     
     @Autowired
     HandshakeValidator handshakeHandler;
+    
+    @Autowired
+    CustomLoggingService logger;
     
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -39,6 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 })
                 .withSockJS()
                 .setInterceptors(handshakeHandler);
+        logger.info("Stomp endpoint registered");
     }
 
     @Override

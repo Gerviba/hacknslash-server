@@ -24,7 +24,7 @@ public class UserStorageService {
     private Map<String, PlayerEntity> players = new ConcurrentHashMap<>();
     
     @Autowired
-    private ConcurrentHashMap<String, MapPojo> maps;
+    ConcurrentHashMap<String, MapPojo> maps;
     
     @Autowired
     PlayerRepository repo;
@@ -42,6 +42,8 @@ public class UserStorageService {
     }
     
     public void removePlayer(String sessionId) {
+        PlayerEntity player = players.get(sessionId);
+        maps.get(player.getMap()).removePlayer(player);        
         repo.save(players.remove(sessionId));
     }
     

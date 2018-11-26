@@ -15,6 +15,7 @@ import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket;
 import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket.MessageType;
+import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +30,9 @@ public class WebSocketEventListener {
     @Autowired
     UserStorageService users;
     
+    @Autowired
+    CustomLoggingService logger;
+    
     @EventListener
     public void handleConnect(SessionConnectEvent event) {
         log.info("Connecting: " + event.getMessage());
@@ -39,21 +43,38 @@ public class WebSocketEventListener {
         int start = (event.getMessage().toString()).indexOf("{session-id=");
         String sessionId = (event.getMessage().toString())
                 .substring(start + 12, (event.getMessage().toString()).indexOf("}", start));
+        
         log.info("Received a new web socket connection: " + sessionId);
         PlayerEntity player = users.getPlayer(sessionId);
-        messaging.convertAndSend("/topic/chat", 
-                new ChatMessagePacket(MessageType.JOIN, "SERVER", "ALL", player.getName() + " joined the server"));
+        log.info("User " + player.getName() + " joined the game");
+        logger.info("User " + player.getName() + " joined the game");
+        
+        sendJoined(player);
     }
     
     @EventListener
     public void handleDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        log.info("Disconnected " + headerAccessor.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
+        log.info("Disconnected " + headerAccessor.getSessionAttributes()
+                .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
         PlayerEntity player = users.getPlayer((String) headerAccessor
                 .getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
+        
+        logger.info("User " + player.getName() + " left the game");
+        
+        sendLeft(player);
+        users.removePlayer((String) headerAccessor.getSessionAttributes()
+                .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
+    }
+    
+    private void sendJoined(PlayerEntity player) {
+        messaging.convertAndSend("/topic/chat", 
+                new ChatMessagePacket(MessageType.JOIN, "SERVER", "ALL", player.getName() + " joined the server"));
+    }
+
+    private void sendLeft(PlayerEntity player) {
         messaging.convertAndSend("/topic/chat", 
                 new ChatMessagePacket(MessageType.LEAVE, "SERVER", "ALL", player.getName() + " left the server"));
-        users.removePlayer((String) headerAccessor.getSessionAttributes().get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
     }
     
     @EventListener
