@@ -18,6 +18,10 @@ import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.connection.HandshakeValidator;
 import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 
+/**
+ * WebScoket config class
+ * @author Gergely Szabó
+ */
 @Profile(ConfigProfile.GAME_SERVER)
 @Configuration
 @EnableWebSocketMessageBroker
@@ -29,6 +33,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Autowired
     CustomLoggingService logger;
     
+    /**
+     * STOMP endpoint registerer
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/game")
@@ -46,6 +53,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         logger.info("Stomp endpoint registered");
     }
 
+    /**
+     * Message broker config
+     */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");

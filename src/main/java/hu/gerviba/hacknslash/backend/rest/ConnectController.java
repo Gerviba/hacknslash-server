@@ -42,6 +42,10 @@ public class ConnectController {
     @Autowired
     UserStorageService users;
     
+    /**
+     * Load the server icon image
+     * @throws IOException
+     */
     @PostConstruct
     void init() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -51,6 +55,10 @@ public class ConnectController {
         baos.close();
     }
     
+    /**
+     * The <pre>/api/connect/info</pre> endpoint
+     * @return The basic information of the server
+     */
     @GetMapping("/info")
     ServerListInfoResponse info() {
         return new ServerListInfoResponse(name, motd, users.countPlayers(), maxUsers, icon);

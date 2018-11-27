@@ -1,8 +1,7 @@
 package hu.gerviba.hacknslash.backend.pathfinder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,38 +111,43 @@ public class PathFinderTest {
                 .map(coord -> PathFinder.coordsToId(coord[0], coord[1]))
                 .collect(Collectors.toList());
         
-        for (int y = 0; y < 8; ++y) {
-            for (int x = 0; x < 7; ++x) {
-                System.out.print(map[y * 7 + x][2]);
-            }
-            System.out.println("");
-        }
-        System.out.println("");
-        
         
         PathFinder pf = new PathFinder(v);
         LinkedList<Long> shortestPath = pf.shortestPath(
                 PathFinder.coordsToId(0, 0), 
                 PathFinder.coordsToId(4, 3));
         
-//        assertEquals(0, shortestPath.size());
-//        assertEquals("", shortestPath.stream()
-//                .map(PathFinder::idToCoords)
-//                .collect(Collectors.joining("\n")));
+        assertEquals(26, shortestPath.size());
+        assertEquals("(0, 0)\n" +
+                "(0, 1)\n" +
+                "(1, 1)\n" +
+                "(2, 1)\n" +
+                "(2, 2)\n" +
+                "(2, 3)\n" +
+                "(1, 3)\n" +
+                "(1, 4)\n" +
+                "(1, 5)\n" +
+                "(1, 6)\n" +
+                "(2, 6)\n" +
+                "(3, 6)\n" +
+                "(4, 6)\n" +
+                "(4, 7)\n" +
+                "(5, 7)\n" +
+                "(6, 7)\n" +
+                "(6, 6)\n" +
+                "(6, 5)\n" +
+                "(6, 4)\n" +
+                "(6, 3)\n" +
+                "(6, 2)\n" +
+                "(6, 1)\n" +
+                "(5, 1)\n" +
+                "(4, 1)\n" +
+                "(4, 2)\n" +
+                "(4, 3)",
+                shortestPath.stream()
+                        .map(PathFinder::idToCoords)
+                        .collect(Collectors.joining("\n")));
         
-        shortestPath.stream()
-                .map(PathFinder::idToCoords)
-                .forEach(System.out::println);
-        
-        for (int y = 0; y < 8; ++y) {
-            for (int x = 0; x < 7; ++x) {
-                if (shortestPath.contains(PathFinder.coordsToId(x, y)))
-                    System.out.print("#");
-                else
-                    System.out.print(map[y * 7 + x][2]);
-            }
-            System.out.println("");
-        }
     }
     
 }

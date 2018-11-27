@@ -18,6 +18,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Registered user entity
+ * @author Gergely Szabó
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @SuppressWarnings("serial")

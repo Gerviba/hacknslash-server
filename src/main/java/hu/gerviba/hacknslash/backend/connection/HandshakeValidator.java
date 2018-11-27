@@ -26,6 +26,11 @@ import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Handshake validator component
+ * @author gerviba
+ *
+ */
 @Slf4j
 @Profile(ConfigProfile.GAME_SERVER)
 @Component
@@ -51,6 +56,9 @@ public class HandshakeValidator implements HandshakeInterceptor {
     @Autowired
     CustomLoggingService logger;
     
+    /**
+     * Handshake handler
+     */
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
             WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
@@ -67,14 +75,11 @@ public class HandshakeValidator implements HandshakeInterceptor {
             
             String sessionId = servletRequest.getHeaders().get(CLIENT_SIDE_SESSION_ID_ATTRIBUTE).get(0);
             
-            // FIXME: Ez így IO blocking:
             ValidationResponse validation = restTemplate.postForObject(authServerUrl + "/auth/validate", 
                     new ValidationRequest(sessionId), ValidationResponse.class);
             
             if (validation.getStatus().getStatus().equals(AuthStatus.VALID.name())) {
                 attributes.put(SESSION_ID_ATTRIBUTE, sessionId);
-                
-                // TODO: Ne léphessenek be egy sessionID-vel többen
                 
                 Optional<PlayerEntity> player = players.findById(validation.getUser().getUuid());
                 
@@ -102,6 +107,9 @@ public class HandshakeValidator implements HandshakeInterceptor {
         return false;
     }
 
+    /**
+     * After handshake validated
+     */
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                WebSocketHandler wsHandler, Exception ex) {

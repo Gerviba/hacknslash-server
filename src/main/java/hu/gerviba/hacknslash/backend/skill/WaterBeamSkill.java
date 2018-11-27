@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 
+/**
+ * Beam of water particles
+ * @author Gergely Szabó
+ */
 public class WaterBeamSkill extends Skill {
 
     @Autowired
@@ -21,10 +25,19 @@ public class WaterBeamSkill extends Skill {
     private static int DIRECTION_RIGHT = 2;
     private static int DIRECTION_BACK = 3;
     
+    /**
+     * Skill constructor
+     * @param skillUid Unique ID of the skill
+     * @param manaCost Mana cost of casing the skill
+     * @param reloadTime Time to reload
+     */
     public WaterBeamSkill(int skillUid, double manaCost, int reloadTime) {
         super(skillUid, manaCost, reloadTime);
     }
-
+    
+    /**
+     * Cast the skill, register future damage coordinates
+     */
     @Override
     public void apply(PlayerEntity pe, double x, double y, int direction) {
         pe.setMana(pe.getMana() - getManaCost());

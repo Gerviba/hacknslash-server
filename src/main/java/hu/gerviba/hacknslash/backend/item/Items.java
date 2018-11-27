@@ -5,6 +5,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Item storage and utility functions
+ * @author Gergely Szabó
+ */
 public class Items {
     
     public static final ItemType SKILL_POISON = new ItemType(1, 1, 
@@ -115,6 +119,9 @@ public class Items {
 
     public static final Map<Integer, ItemType> ALL;
     
+    /**
+     * Static initialization
+     */
     static {
         ALL = Stream.of(Items.class.getFields())
                 .filter(field -> field.getType() == ItemType.class)
@@ -130,6 +137,11 @@ public class Items {
         
     }
     
+    /**
+     * Item getter by id
+     * @param itemId ID of the item
+     * @return The item with the specified ID
+     */
     public static ItemType get(int itemId) {
         return ALL.get(itemId);
     }

@@ -19,6 +19,10 @@ import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * WebScoket event listener
+ * @author Gergely Szabó
+ */
 @Slf4j
 @Profile(ConfigProfile.GAME_SERVER)
 @Component
@@ -33,11 +37,19 @@ public class WebSocketEventListener {
     @Autowired
     CustomLoggingService logger;
     
+    /**
+     * Connecting handler
+     * @param event
+     */
     @EventListener
     public void handleConnect(SessionConnectEvent event) {
         log.info("Connecting: " + event.getMessage());
     }
     
+    /**
+     * Handle connecting user and prepares handshake
+     * @param event 
+     */
     @EventListener
     public void handleConnected(SessionConnectedEvent event) {
         int start = (event.getMessage().toString()).indexOf("{session-id=");
@@ -52,6 +64,10 @@ public class WebSocketEventListener {
         sendJoined(player);
     }
     
+    /**
+     * Handle disconnect
+     * @param event
+     */
     @EventListener
     public void handleDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
@@ -67,16 +83,28 @@ public class WebSocketEventListener {
                 .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
     }
     
+    /**
+     * Send x player joined broadcast message
+     * @param player
+     */
     private void sendJoined(PlayerEntity player) {
         messaging.convertAndSend("/topic/chat", 
                 new ChatMessagePacket(MessageType.JOIN, "SERVER", "ALL", player.getName() + " joined the server"));
     }
 
+    /**
+     * Send x player left broadcast message
+     * @param player
+     */
     private void sendLeft(PlayerEntity player) {
         messaging.convertAndSend("/topic/chat", 
                 new ChatMessagePacket(MessageType.LEAVE, "SERVER", "ALL", player.getName() + " left the server"));
     }
     
+    /**
+     * Handle player subscribe to channel
+     * @param event
+     */
     @EventListener
     public void handleSubscribe(SessionSubscribeEvent event) {
         log.info("Subscribe: " + event.getMessage());

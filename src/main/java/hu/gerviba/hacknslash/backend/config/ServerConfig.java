@@ -5,20 +5,28 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
-import hu.gerviba.hacknslash.backend.ConfigProfile;
-
-@Profile(ConfigProfile.GAME_SERVER)
+/**
+ * Server configuration
+ * @author Gergely Szabó
+ */
 @Configuration
-public class GameServerConfig {
+public class ServerConfig {
 
+    /**
+     * The RestTemplate bean factory
+     * @return The {@link RestTemplate} singleton bean
+     */
     @Bean
     RestTemplate restTemplate() {
         return new RestTemplate();
     }
-    
+
+    /**
+     * The ScheduledExecutorService bean factory
+     * @return The {@link ScheduledExecutorService} singleton bean
+     */
     @Bean
     ScheduledExecutorService executorService() {
         return Executors.newSingleThreadScheduledExecutor();

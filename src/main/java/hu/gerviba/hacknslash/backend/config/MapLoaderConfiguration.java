@@ -28,6 +28,10 @@ import hu.gerviba.hacknslash.backend.pojo.game.StaticObjectPojo;
 import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Map loader
+ * @author Gergely Szabó
+ */
 @Profile(ConfigProfile.GAME_SERVER)
 @Configuration
 @Slf4j
@@ -39,6 +43,9 @@ public class MapLoaderConfiguration {
     @Autowired
     CustomLoggingService logger;
     
+    /**
+     * Map list bean factory
+     */
     @Bean
     ConcurrentHashMap<String, IngameMap> mapConfig() {
         ConcurrentHashMap<String, IngameMap> maps = new ConcurrentHashMap<>();
@@ -57,6 +64,13 @@ public class MapLoaderConfiguration {
         return maps;
     }
 
+    /**
+     * Load a new map
+     * @param name Name of the map
+     * @param mapFile File name of the map
+     * @return A loaded IngameMap
+     * @throws IOException
+     */
     private IngameMap loadMap(String name, File mapFile) throws IOException {
         log.info("Loading map: " + name + " (" + mapFile.getAbsolutePath() + ")");
         logger.info("Loading map: " + name);
@@ -86,6 +100,13 @@ public class MapLoaderConfiguration {
         return map;
     }
 
+    /**
+     * Load meta data of the map
+     * @param lines Lines of the map file
+     * @param name Name of the map
+     * @return A new IngameMap instance
+     * @throws IOException
+     */
     private IngameMap loadMeta(List<String> lines, String name) throws IOException {
         String displayName = name;
         String texture = "na";
@@ -115,6 +136,19 @@ public class MapLoaderConfiguration {
         return new IngameMap(name, displayName, texture, spawnX, spawnY, backgroundColor);
     }
     
+    /**
+     * Constructs a new map load packet
+     * @param name Map name
+     * @param displayName Display name of the map
+     * @param texture Texture file
+     * @param fileName The .bg file name
+     * @param x Spawn X coordinates
+     * @param y Spawn Y coordinates
+     * @param color Background color
+     * @param objects Static objects
+     * @return The MapLoadPacket of the map
+     * @throws IOException
+     */
     private MapLoadPacket loadMapLoadPacket(String name, String displayName, 
             String texture, String fileName, double x, double y, String color,
             List<StaticObjectPojo> objects) throws IOException {
@@ -128,12 +162,24 @@ public class MapLoaderConfiguration {
                 convertToPacketType(objects));
     }
 
+    /**
+     * Static Object packet type converter
+     * @param objects object pojos
+     * @return List of converted objects
+     */
     private List<StaticObjectInfo> convertToPacketType(List<StaticObjectPojo> objects) {
         return objects.stream()
                 .map(StaticObjectPojo::toPacketType)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Load the layer of a map
+     * @param layer
+     * @param lines
+     * @return
+     * @throws IOException
+     */
     private MapLayerInfo loadMapLayer(LayerType layer, List<String> lines) throws IOException {
         List<BackgroundPart> parts = lines.stream()
                 .filter(line -> line.startsWith("DEF "))

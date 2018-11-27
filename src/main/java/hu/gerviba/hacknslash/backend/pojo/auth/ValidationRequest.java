@@ -1,18 +1,16 @@
 package hu.gerviba.hacknslash.backend.pojo.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@NoArgsConstructor
+/**
+ * Pojo to store validation request
+ * @author Gergely Szabó
+ */
+@Data
 @AllArgsConstructor
-@ToString
 public class ValidationRequest {
 
-    @Getter
-    @Setter
     private String sessionId;
     
 }

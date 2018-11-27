@@ -6,10 +6,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * Map load packet
+ * @author Gergely Szabó
+ */
 @Data
 @AllArgsConstructor
 public class MapLoadPacket {
     
+    /**
+     * Layer type
+     * @author Gergely Szabó
+     */
     @AllArgsConstructor
     public static enum LayerType {
         BACKGROUND("BG_FRAGMENT", "B"),
@@ -22,10 +30,18 @@ public class MapLoadPacket {
         private String indicator;
     }
     
+    /**
+     * Map layer info
+     * @author Gergely Szabó
+     */
     @Data
     @AllArgsConstructor
     public static class MapLayerInfo {
         
+        /**
+         * Background part
+         * @author Gergely Szabó
+         */
         @Data
         @AllArgsConstructor
         public static class BackgroundPart {
@@ -40,6 +56,10 @@ public class MapLoadPacket {
         
     }
 
+    /**
+     * Static object info
+     * @author Gergely Szabó
+     */
     @Data
     @AllArgsConstructor
     public static class StaticObjectInfo {

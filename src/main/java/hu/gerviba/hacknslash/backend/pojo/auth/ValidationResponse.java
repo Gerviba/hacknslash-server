@@ -2,22 +2,17 @@ package hu.gerviba.hacknslash.backend.pojo.auth;
 
 import hu.gerviba.hacknslash.backend.pojo.SimpleStatusResponse;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@NoArgsConstructor
+/**
+ * Pojo to store validation data
+ * @author Gergely Szabó
+ */
+@Data
 @AllArgsConstructor
-@ToString
 public class ValidationResponse {
-        
-    @Getter
-    @Setter
+
     private SimpleStatusResponse status;
-    
-    @Getter
-    @Setter
     private UserRepresentation user;
-        
+
 }

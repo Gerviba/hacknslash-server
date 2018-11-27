@@ -8,6 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Player inventory representation
+ * @author Gergely Szabó
+ */
 @AllArgsConstructor
 public class Inventory {
 
@@ -20,7 +24,9 @@ public class Inventory {
     public static final int SLOT_ID_ARMOR = 3;
     public static final int SLOT_ID_BOOTS = 4;
     
-    
+    /**
+     * Static initialization
+     */
     static {
         CATEGORY_RESTRICTION.put(SLOT_ID_WEAPON, Arrays.asList(ItemCategory.WEAPON));
         CATEGORY_RESTRICTION.put(SLOT_ID_RING, Arrays.asList(ItemCategory.RING));
@@ -42,10 +48,21 @@ public class Inventory {
     @Getter
     private Map<Integer, ItemSlot> itemSlot;
 
+    /**
+     * Slot getter by ID
+     * @param slotId Slot ID
+     * @return Selected slot
+     */
     public ItemSlot getSlot(int slotId) {
         return itemSlot.get(slotId);
     }
     
+    /**
+     * Put item to slot
+     * @param slot Slot id
+     * @param itemId Item id
+     * @param count Count of items
+     */
     public void putItemToSlot(int slot, int itemId, int count) {
         if (itemSlot.containsKey(slot))
             itemSlot.get(slot).update(itemId, count);
@@ -53,6 +70,11 @@ public class Inventory {
             itemSlot.put(slot, new ItemSlot(itemId, count));
     }
     
+    /**
+     * Put item to slot
+     * @param slot Slot id
+     * @param item Slot to copy
+     */
     public void putItemToSlot(int slot, ItemSlot item) {
         if (itemSlot.containsKey(slot))
             itemSlot.get(slot).update(item.getItemId(), item.getCount());
@@ -60,6 +82,12 @@ public class Inventory {
             itemSlot.put(slot, new ItemSlot(item.getItemId(), item.getCount()));
     }
     
+    /**
+     * Add item
+     * @param itemId
+     * @param count
+     * @return
+     */
     public boolean addItem(int itemId, int count) {
         for (int i = 22; i <= 62; ++i) {
             if (!itemSlot.containsKey(i)) {
@@ -70,6 +98,12 @@ public class Inventory {
         return false;
     }
     
+    /**
+     * Change items
+     * @param from
+     * @param to
+     * @return
+     */
     public boolean change(int from, int to) {
         if (!checkSide(to, getSlot(from)) || !checkSide(from, getSlot(to)))
             return false;
@@ -95,36 +129,54 @@ public class Inventory {
         return true;
     }
 
+    /**
+     * Validate item positions
+     */
     private boolean checkSide(int slotId, ItemSlot slotSource) {
         return slotSource == null
                 || CATEGORY_RESTRICTION.getOrDefault(slotId, NO_RESTRICTION)
                         .contains(Items.get(slotSource.getItemId()).getType());
     }
 
+    /**
+     * Weapon texture getter
+     */
     public String getWeapon() {
         if (getSlot(SLOT_ID_WEAPON) == null)
             return "null";
         return Items.get(getSlot(SLOT_ID_WEAPON).getItemId()).getTextureName();
     }
 
+    /**
+     * Ring texture getter
+     */
     public String getRing() {
         if (getSlot(SLOT_ID_RING) == null)
             return "null";
         return Items.get(getSlot(SLOT_ID_RING).getItemId()).getTextureName();
     }
 
+    /**
+     * Helmet texture getter
+     */
     public String getHelmet() {
         if (getSlot(SLOT_ID_HELMET) == null)
             return "null";
         return Items.get(getSlot(SLOT_ID_HELMET).getItemId()).getTextureName();
     }
-    
+
+    /**
+     * Armor texture getter
+     */
     public String getArmor() {
         if (getSlot(SLOT_ID_ARMOR) == null)
             return "null";
         return Items.get(getSlot(SLOT_ID_ARMOR).getItemId()).getTextureName();
     }
-    
+
+    /**
+     * Boots texture getter
+     */
     public String getBoots() {
         if (getSlot(SLOT_ID_BOOTS) == null)
             return "null";

@@ -14,6 +14,13 @@ public abstract class Skill {
     @Getter
     private final int reloadTime;
     
+    /**
+     * Cast the skill, register future damage coordinates
+     * @param pe Player
+     * @param x X coordinate
+     * @param yY coordinate
+     * @param direction Direction
+     */
     public abstract void apply(PlayerEntity pe, double x, double y, int direction);
     
 }

@@ -24,6 +24,10 @@ import hu.gerviba.hacknslash.backend.packets.TelemetryUpdatePacket;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Player entity.
+ * @author Gergely Szabó
+ */
 @Profile(ConfigProfile.GAME_SERVER)
 @SuppressWarnings("serial")
 @Entity
@@ -102,11 +106,9 @@ public class PlayerEntity implements Serializable, Principal {
     @Transient
     private volatile double y;
     
-    // TODO: Eztszámolja ki delta -> fokok alapján
     @Transient
     private volatile int direction;
     
-    // TODO: Eztszámolja ki delta -> fokok alapján
     @Transient
     private volatile boolean walking;
 
@@ -130,6 +132,10 @@ public class PlayerEntity implements Serializable, Principal {
     @Convert(converter = InventoryConverter.class)
     private Inventory inventory;
 
+    /**
+     * Default constructor
+     * @param id
+     */
     public PlayerEntity(String id) {
         this.id = id;
         this.hp = 100;
@@ -148,6 +154,10 @@ public class PlayerEntity implements Serializable, Principal {
         this.inventory = new Inventory(new HashMap<>());
     }
 
+    /**
+     * Update player position
+     * @param telemetry
+     */
     public void update(TelemetryUpdatePacket telemetry) {
         this.x = telemetry.getX();
         this.y = telemetry.getY();
@@ -157,6 +167,10 @@ public class PlayerEntity implements Serializable, Principal {
     
     private static ConcurrentHashMap<Integer, Integer> EXPS_PER_LEVEL = new ConcurrentHashMap<>();
     
+    /**
+     * Get maximum exp on the specific level
+     * @return
+     */
     public int getMaxExp() {
         if (!EXPS_PER_LEVEL.containsKey(level))
             EXPS_PER_LEVEL.put(level, 
@@ -165,14 +179,25 @@ public class PlayerEntity implements Serializable, Principal {
         return EXPS_PER_LEVEL.get(level);
     }
     
+    /**
+     * Mana setter
+     * @param mana Mana count
+     */
     public void setMana(double mana) {
         this.mana = Math.min(mana, maxMana);
     }
 
+    /**
+     * HP setter
+     * @param hp HP count
+     */
     public void setHp(double hp) {
-        this.hp = Math.min(hp, maxHp);
+        this.hp = Math.max(0, Math.min(hp, maxHp));
     }
 
+    /**
+     * Uodate appearance of the player
+     */
     public void updateAppearance() {
         this.weapon = inventory.getWeapon();
         this.helmet = inventory.getHelmet();

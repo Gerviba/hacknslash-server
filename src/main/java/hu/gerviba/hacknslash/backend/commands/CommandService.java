@@ -17,6 +17,10 @@ import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Command service
+ * @author Gergely Szabó
+ */
 @Slf4j
 @Profile(ConfigProfile.GAME_SERVER)
 @Service
@@ -28,6 +32,10 @@ public class CommandService {
     @Autowired
     GlobalPacketService packets;
     
+    /**
+     * Command handler
+     * @author Gergely Szabó
+     */
     @FunctionalInterface
     interface Command {
         public void handle(PlayerEntity player, String[] args);
@@ -35,6 +43,9 @@ public class CommandService {
     
     private Map<String, Command> commands = new ConcurrentHashMap<>();
     
+    /**
+     * Load listeners
+     */
     @PostConstruct
     public void loadCommands() {
         registerListener(new PlayerCommandListener());
@@ -42,6 +53,10 @@ public class CommandService {
         registerListener(new AdminCommandListener());
     }
 
+    /**
+     * Register listeners
+     * @param listener Event listener
+     */
     public void registerListener(Object listener) {
         beanFactory.autowireBean(listener);
         log.info("Registering new listener: " + listener.getClass().getName());
@@ -67,6 +82,12 @@ public class CommandService {
         }
     }
 
+    /**
+     * Handle command
+     * @param pe Player
+     * @param message Message
+     * @return true, is success
+     */
     public boolean handle(PlayerEntity pe, String message) {
         String[] args = message.split(" ");
         if (commands.containsKey(args[0].toLowerCase())) {

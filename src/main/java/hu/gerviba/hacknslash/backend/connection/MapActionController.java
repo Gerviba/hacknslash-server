@@ -31,6 +31,10 @@ import hu.gerviba.hacknslash.backend.skill.Skill;
 import hu.gerviba.hacknslash.backend.skill.ThunderSkill;
 import hu.gerviba.hacknslash.backend.skill.WaterBeamSkill;
 
+/**
+ * Map related actions controller
+ * @author Gergely Szabó
+ */
 @Profile(ConfigProfile.GAME_SERVER)
 @Controller
 public class MapActionController {
@@ -46,6 +50,9 @@ public class MapActionController {
     
     private Map<Integer, Skill> skills = new ConcurrentHashMap<>();
     
+    /**
+     * Load skills
+     */
     @PostConstruct
     void init() {
         skills.put(101, new HealthPotion(101, 1000, 20));
@@ -65,6 +72,12 @@ public class MapActionController {
         skills.values().forEach(beanFactory::autowireBean);
     }
     
+    /**
+     * Player casted a skill
+     * @param skill Request payload
+     * @param header SIMP header
+     * @return Casted skill
+     */
     @MessageMapping("/skills")
     @SendTo("/topic/skills")
     SkillPacket skill(@Payload SkillRequestPacket skill, SimpMessageHeaderAccessor header) {
@@ -77,6 +90,11 @@ public class MapActionController {
         return new SkillPacket(skill.getSkillUid(), pe.getDirection(), pe.getX() / 64, pe.getY() / 64);
     }
     
+    /**
+     * Player switched two of their item
+     * @param change Request payload
+     * @param header SIMP header
+     */
     @MessageMapping("/switch-item")
     void switchItem(@Payload ItemChangeUpdatePacket change, SimpMessageHeaderAccessor header) {
         PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()

@@ -13,12 +13,17 @@ import org.springframework.stereotype.Controller;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
+import hu.gerviba.hacknslash.backend.packets.JustConnectedPacket;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
 import hu.gerviba.hacknslash.backend.packets.TelemetryUpdatePacket;
 import hu.gerviba.hacknslash.backend.pojo.game.IngameMap;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 
+/**
+ * Player position related controller
+ * @author Gergely Szabó
+ */
 @Profile(ConfigProfile.GAME_SERVER)
 @Controller
 @EnableScheduling
@@ -33,6 +38,11 @@ public class TelemetryController {
     @Autowired
     GlobalPacketService packets;
     
+    /**
+     * Position update packet
+     * @param telemetry Request packet (that holds the player's new coordinates)
+     * @param header SIMP header
+     */
     @MessageMapping("/telemetry")
     void sendTelemetry(@Payload TelemetryUpdatePacket telemetry, SimpMessageHeaderAccessor header) {
         users.getPlayer((String) header.getSessionAttributes()
@@ -40,9 +50,15 @@ public class TelemetryController {
                 .update(telemetry);
     }
 
+    /**
+     * Request map load
+     * @param connected Request packet
+     * @param header SIMP header
+     * @return The full map
+     */
     @MessageMapping("/connected")
     @SendToUser("/topic/map")
-    MapLoadPacket mapConnect(@Payload TelemetryUpdatePacket telemetry, SimpMessageHeaderAccessor header) {
+    MapLoadPacket mapConnect(@Payload JustConnectedPacket connected, SimpMessageHeaderAccessor header) {
         PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()
                 .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
         packets.sendFullInventoryUpdate(pe);
@@ -52,6 +68,9 @@ public class TelemetryController {
         return map.getMapLoadPacket();
     }
     
+    /**
+     * Update timer
+     */
     @Scheduled(fixedRate = 50)
     void updateTelemetry() {
         users.getMaps().forEach(map -> map.updateTelemetry(messaging));

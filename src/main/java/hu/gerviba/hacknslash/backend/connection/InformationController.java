@@ -13,6 +13,10 @@ import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.SelfInfoUpdatePacket;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 
+/**
+ * Self info request controller
+ * @author Gergely Szabó
+ */
 @Profile(ConfigProfile.GAME_SERVER)
 @Controller
 public class InformationController {
@@ -23,6 +27,11 @@ public class InformationController {
     @Autowired
     UserStorageService users;
 
+    /**
+     * User requested an info update
+     * @param header SIMP header
+     * @return SelfInfo packet (with hp, exp, mana, level, money)
+     */
     @MessageMapping("/self")
     @SendToUser("/topic/self")
     SelfInfoUpdatePacket sendMessage(SimpMessageHeaderAccessor header) {

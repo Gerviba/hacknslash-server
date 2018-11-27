@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 
+/**
+ * Clouds and lightnings
+ * @author Gergely Szabó
+ */
 public class ThunderSkill extends Skill {
 
     @Autowired
@@ -22,7 +26,13 @@ public class ThunderSkill extends Skill {
     private static int DIRECTION_BACK = 3;
     
     private final double[] X_COORDS, Y_COORDS;
-
+    
+    /**
+     * Skill constructor
+     * @param skillUid Unique ID of the skill
+     * @param manaCost Mana cost of casing the skill
+     * @param reloadTime Time to reload
+     */
     public ThunderSkill(int skillUid, double manaCost, int reloadTime) {
         super(skillUid, manaCost, reloadTime);
         

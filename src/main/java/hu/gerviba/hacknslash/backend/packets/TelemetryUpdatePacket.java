@@ -3,6 +3,10 @@ package hu.gerviba.hacknslash.backend.packets;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Telemetry update packet
+ * @author Gergely Szabó
+ */
 @Data
 @NoArgsConstructor
 public class TelemetryUpdatePacket {

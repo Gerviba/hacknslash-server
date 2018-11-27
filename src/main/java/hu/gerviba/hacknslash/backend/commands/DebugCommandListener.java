@@ -6,17 +6,53 @@ import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket.MessageType;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 
+/**
+ * Debug commands to test the server
+ * @author Gergely Szabó
+ */
 public class DebugCommandListener {
 
     @Autowired
     GlobalPacketService packets;
     
+    /**
+     * Hurt the performer player by -10HP
+     * @param player Command performer
+     * @param args Command arguments
+     */
     @CommandHandler("damage")
-    void ping(PlayerEntity player, String[] args) {
+    void damage(PlayerEntity player, String[] args) {
         player.setHp(player.getHp() - 10);
         packets.sendSelfUpdate(player);
     }
     
+    /**
+     * Hurt the performer player by -25HP
+     * @param player Command performer
+     * @param args Command arguments
+     */
+    @CommandHandler("damage25")
+    void damage25(PlayerEntity player, String[] args) {
+        player.setHp(player.getHp() - 25);
+        packets.sendSelfUpdate(player);
+    }
+    
+    /**
+     * Hurt the performer player by -50HP
+     * @param player Command performer
+     * @param args Command arguments
+     */
+    @CommandHandler("damage50")
+    void damage50(PlayerEntity player, String[] args) {
+        player.setHp(player.getHp() - 50);
+        packets.sendSelfUpdate(player);
+    }
+    
+    /**
+     * Sends the test chat messages to the player
+     * @param player Command performer
+     * @param args Command arguments
+     */
     @CommandHandler("testmsgs")
     void testmsgs(PlayerEntity player, String[] args) {
         packets.sendPrivateMessage(player, MessageType.ANNOUNCEMENT, "TIP: Use 'I' to open inventory");

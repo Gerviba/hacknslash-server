@@ -38,6 +38,9 @@ public class IngameMap {
     private PathFinder pathFinder;
     private LinkedList<Long> removedEntities = new LinkedList<>();
     
+    /**
+     * Initialize path finder
+     */
     public void init() {
         pathFinder = new PathFinder(mapLoadPacket.getBackground().getParts()
                 .stream()
@@ -45,14 +48,26 @@ public class IngameMap {
                 .collect(Collectors.toList()));
     }
     
+    /**
+     * Add mobs
+     * @param mobs Mob spawning spots
+     */
     public void addMobs(List<MobTemplate> mobs) {
         this.mobs.addAll(mobs);
     }
 
+    /**
+     * Add static objects
+     * @param objects Static object like chests
+     */
     public void addObjects(List<StaticObjectPojo> objects) {
         this.objects.addAll(objects);
     }
     
+    /**
+     * Generate telemetry packet
+     * @return A telemetry packet with the current data
+     */
     public TelemetryPacket generatePacketFormMap() {
         TelemetryPacket packet = new TelemetryPacket();
         packet.setPlayers(players.values().stream()
@@ -76,18 +91,30 @@ public class IngameMap {
         return packet;
     }
 
+    /**
+     * Update positions and informations
+     * @param messaging
+     */
     public void updateTelemetry(SimpMessagingTemplate messaging) {
         TelemetryPacket packet = generatePacketFormMap();
         players.values().forEach(user -> messaging
                 .convertAndSendToUser(user.getSessionId(), "/topic/telemetry", packet));
     }
     
+    /**
+     * Remove entity from map
+     * @param entityId The entity ID of the entity
+     */
     public void removeEntity(long entityId) {
         synchronized (removedEntities) {
             removedEntities.add(entityId);
         }
     }
     
+    /**
+     * Palyer disappeared in the map
+     * @param pe player
+     */
     public void removePlayer(PlayerEntity pe) {
         players.remove(pe.getSessionId());
         synchronized (removedEntities) {
@@ -95,14 +122,24 @@ public class IngameMap {
         }
     }
     
+    /**
+     * Player appeared in the map
+     * @param pe player
+     */
     public void addPlayer(PlayerEntity pe) {
         players.put(pe.getSessionId(), pe);
     }
     
+    /**
+     * Recalculate the path
+     */
     public void recalculatePaths() {
 //        mobs.forEach(m -> m.recalculatePaths(this));
     }
     
+    /**
+     * Respawn timer ticks
+     */
     public void spawnTimerTicks() {
         mobs.forEach(m -> m.increaseRespawnTimer(this));
     }

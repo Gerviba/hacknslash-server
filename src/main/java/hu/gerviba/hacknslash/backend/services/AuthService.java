@@ -23,6 +23,10 @@ import hu.gerviba.hacknslash.backend.repos.SessionRepository;
 import hu.gerviba.hacknslash.backend.repos.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Authenticate service
+ * @author Gergely Szabó
+ */
 @Profile(ConfigProfile.AUTH_SERVER)
 @Service
 @Transactional
@@ -44,6 +48,13 @@ public class AuthService {
     @Value("${auth.session-timeout:3600000}")
     long sessionTimeout;
     
+    /**
+     * Handle the authentication of a user
+     * @param email User's email
+     * @param password User's password
+     * @param ip User's IP address
+     * @return Login response
+     */
     public LoginResponse authenticate(String email, String password, String ip) {
         log.debug("Checking user auth " + email + " (ip: " + ip + ")");
         Optional<RegisteredUserEntity> user = users.findByEmailIgnoreCase(email);
@@ -80,6 +91,12 @@ public class AuthService {
                 promoted);
     }
     
+    /**
+     * Check session ID before login
+     * @param sessionId User's session ID
+     * @param serverIp IP address of the server
+     * @return Validation response
+     */
     public ValidationResponse checkSession(String sessionId, String serverIp) {
         log.debug("Checking session " + sessionId + " for server running on: " + serverIp);
         
@@ -103,6 +120,13 @@ public class AuthService {
                 new UserRepresentation(session.get().getId(), session.get().getUsername(), null));
     }
 
+    /**
+     * Register a new user
+     * @param username Name of the user
+     * @param email Email address of the user
+     * @param password Password of the user
+     * @return Registration response
+     */
     public RegistrationResponse register(String username, String email, String password) {
         List<RegisteredUserEntity> errorVector = users.findAllByUsernameIgnoreCaseOrEmailIgnoreCase(
                 username, email);

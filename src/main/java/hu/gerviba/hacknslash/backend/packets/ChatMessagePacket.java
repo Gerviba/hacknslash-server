@@ -3,10 +3,18 @@ package hu.gerviba.hacknslash.backend.packets;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * Chat message packet pojo
+ * @author Gergely Szabó
+ */
 @Data
 @AllArgsConstructor
 public class ChatMessagePacket {
 
+    /**
+     * Message type
+     * @author Gergely Szabó
+     */
     public static enum MessageType {
         CHAT,
         PARTY,

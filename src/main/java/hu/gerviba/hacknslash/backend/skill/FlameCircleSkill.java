@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 
+/**
+ * Circle of flame made of 12 flame particles
+ * @author Gergely Szabó
+ */
 public class FlameCircleSkill extends Skill {
     
     @Autowired
@@ -19,6 +23,12 @@ public class FlameCircleSkill extends Skill {
     private final double[] X_COORDS, Y_COORDS;
     private final int FLAMES = 12;
     
+    /**
+     * Skill constructor
+     * @param skillUid Unique ID of the skill
+     * @param manaCost Mana cost of casing the skill
+     * @param reloadTime Time to reload
+     */
     public FlameCircleSkill(int skillUid, double manaCost, int reloadTime) {
         super(skillUid, manaCost, reloadTime);
         
@@ -32,9 +42,11 @@ public class FlameCircleSkill extends Skill {
         }
     }
 
+    /**
+     * Cast the skill, register future damage coordinates
+     */
     @Override
     public void apply(PlayerEntity pe, double x, double y, int direction) {
-        System.out.println("----- 2");
         pe.setMana(pe.getMana() - getManaCost());
         packets.sendSelfUpdate(pe);
         
@@ -46,10 +58,10 @@ public class FlameCircleSkill extends Skill {
             }, 520, TimeUnit.MILLISECONDS);
             scheduler.schedule(() -> {
                 packets.sendMobDamageTo(pe, tempX, tempY, 8);
-            }, 1520, TimeUnit.MILLISECONDS);
+            }, 1220, TimeUnit.MILLISECONDS);
             scheduler.schedule(() -> {
                 packets.sendMobDamageTo(pe, tempX, tempY, 8);
-            }, 2520, TimeUnit.MILLISECONDS);
+            }, 1920, TimeUnit.MILLISECONDS);
         }
     }
 

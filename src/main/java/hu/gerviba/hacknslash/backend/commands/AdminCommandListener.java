@@ -10,11 +10,20 @@ import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket.MessageType;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 
+/**
+ * Admin commands
+ * @author Gergely Szabó
+ */
 public class AdminCommandListener {
     
     @Autowired
     GlobalPacketService packets;
     
+    /**
+     * Append a starter kit of items to the player
+     * @param player Command performer
+     * @param args Command arguments
+     */
     @CommandHandler("starterkit")
     void starterkit(PlayerEntity player, String[] args) {
         player.getInventory().putItemToSlot(0, Items.WEAPON_BLUE_MAGIC_WAND.getId(), 1);
@@ -40,6 +49,11 @@ public class AdminCommandListener {
         packets.sendFullInventoryUpdate(player);
     }
     
+    /**
+     * Add a new from all the existing items
+     * @param player Command performer
+     * @param args Command arguments
+     */
     @CommandHandler("allitems")
     void allitems(PlayerEntity player, String[] args) {
         for (ItemType it : Items.ALL.values().stream()
@@ -50,7 +64,11 @@ public class AdminCommandListener {
         packets.sendFullInventoryUpdate(player);
     }
     
-    
+    /**
+     * Add n new from the selected items
+     * @param player Command performer
+     * @param args Command arguments
+     */
     @CommandHandler("item")
     void item(PlayerEntity player, String[] args) {
         if (args.length == 1) {

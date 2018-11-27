@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 
+/**
+ * Green gas cloud
+ * @author Gergely Szabó
+ */
 public class PoisonedAreaSkill extends Skill {
 
     @Autowired
@@ -17,7 +21,13 @@ public class PoisonedAreaSkill extends Skill {
     ScheduledExecutorService scheduler;
     
     private final double[] X_COORDS, Y_COORDS;
-
+    
+    /**
+     * Skill constructor
+     * @param skillUid Unique ID of the skill
+     * @param manaCost Mana cost of casing the skill
+     * @param reloadTime Time to reload
+     */
     public PoisonedAreaSkill(int skillUid, double manaCost, int reloadTime) {
         super(skillUid, manaCost, reloadTime);
         
@@ -47,7 +57,10 @@ public class PoisonedAreaSkill extends Skill {
         };
         
     }
-    
+
+    /**
+     * Cast the skill, register future damage coordinates
+     */
     @Override
     public void apply(PlayerEntity pe, double x, double y, int direction) {
         pe.setMana(pe.getMana() - getManaCost());

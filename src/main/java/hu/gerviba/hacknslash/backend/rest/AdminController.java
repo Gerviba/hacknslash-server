@@ -17,11 +17,17 @@ import hu.gerviba.hacknslash.backend.packets.ChatMessagePacket;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 
+/**
+ * This class is for debugging
+ * @author Gergely Szabó
+ *
+ */
 @Profile(ConfigProfile.GAME_SERVER)
 @RestController
 @RequestMapping("/api/admin/")
 public class AdminController {
-
+    
+    // Maybe in the future:
     // Require admin token
     // GET user list
     // GET user count

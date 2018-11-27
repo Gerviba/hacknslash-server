@@ -18,6 +18,10 @@ import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Chat packet controller class
+ * @author Gergely Szabó
+ */
 @Slf4j
 @Profile(ConfigProfile.GAME_SERVER)
 @Controller
@@ -35,15 +39,21 @@ public class ChatController {
     @Autowired
     CustomLoggingService logger;
     
+    /**
+     * A user sent a chat message (or command)
+     * @param chatMessage The chat message
+     * @param header SIMP messgae header
+     * @return ChatMessagePacket forwarded to the /topic/chat
+     */
     @MessageMapping("/chat")
     @SendTo("/topic/chat")
     ChatMessagePacket sendMessage(@Payload ChatMessagePacket chatMessage, SimpMessageHeaderAccessor header) {
         PlayerEntity pe = users.getPlayer((String) header.getSessionAttributes()
                 .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
-        
 
         if (chatMessage.getMessage().startsWith("/")) {
             log.info("Command from " + pe.getName() + ": " + chatMessage.getMessage());
+            logger.info("Command from " + pe.getName() + ": " + chatMessage.getMessage());
             if (!commands.handle(pe, chatMessage.getMessage())) 
                 messaging.convertAndSendToUser(header.getUser().getName(), "/topic/chat", 
                         new ChatMessagePacket(MessageType.WARNING, "", "", "Command not found"));

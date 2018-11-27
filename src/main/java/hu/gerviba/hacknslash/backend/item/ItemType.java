@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Pojo to store item type specific data
+ * @author Gergely Szabó
+ */
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor

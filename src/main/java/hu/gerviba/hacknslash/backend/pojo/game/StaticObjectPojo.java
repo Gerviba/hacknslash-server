@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.StaticObjectInfo;
 import lombok.Data;
 
+/**
+ * Pojo to store static object (such as: chest)
+ * @author Gergely Szabó
+ */
 @Data
 public class StaticObjectPojo {
 
@@ -16,6 +20,10 @@ public class StaticObjectPojo {
     @JsonIgnore
     private final String action;
     
+    /**
+     * Type converter
+     * @return StaticObjectPojo -> StaticObjectInfo
+     */
     public StaticObjectInfo toPacketType() {
         return new StaticObjectInfo(texture, x, y, anchor);
     }

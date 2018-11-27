@@ -5,9 +5,17 @@ import java.util.List;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import lombok.Data;
 
+/**
+ * Players and mobs positions (telemetry packet)
+ * @author Gergely Szabó
+ */
 @Data
 public class TelemetryPacket {
-
+    
+    /**
+     * Player status
+     * @author Gergely Szabó
+     */
     @Data
     public static class PlayerModelStatus {
         private String name;
@@ -41,6 +49,10 @@ public class TelemetryPacket {
         }
     }
     
+    /**
+     * Mob status
+     * @author Gergely Szabó
+     */
     @Data
     public static class MobStatus {
         private final long entityId;

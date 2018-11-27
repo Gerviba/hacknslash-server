@@ -4,6 +4,10 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * Pojo to store a spawned mob
+ * @author Gergely Szabó
+ */
 @Data
 public class MobPojo {
 
@@ -14,6 +18,10 @@ public class MobPojo {
     private double y;
     private volatile double health;
     
+    /**
+     * Is this mob alive
+     * @return true if it is alive
+     */
     public boolean isAlive() {
         return health > 0;
     }

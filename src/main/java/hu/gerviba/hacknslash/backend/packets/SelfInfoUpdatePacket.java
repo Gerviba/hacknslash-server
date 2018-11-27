@@ -3,6 +3,10 @@ package hu.gerviba.hacknslash.backend.packets;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import lombok.Data;
 
+/**
+ * Self info update packet
+ * @author Gergely Szabó
+ */
 @Data
 public class SelfInfoUpdatePacket {
     

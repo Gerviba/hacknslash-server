@@ -6,9 +6,16 @@ import java.util.stream.Stream;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+/**
+ * Inventory converter to database format
+ * @author Gergely Szabó
+ */
 @Converter
 public class InventoryConverter implements AttributeConverter<Inventory, String> {
 
+    /**
+     * Encode
+     */
     @Override
     public String convertToDatabaseColumn(Inventory attribute) {
         return attribute
@@ -19,6 +26,9 @@ public class InventoryConverter implements AttributeConverter<Inventory, String>
                 .collect(Collectors.joining(";"));
     }
 
+    /**
+     * Decode
+     */
     @Override
     public Inventory convertToEntityAttribute(String dbData) {
         return new Inventory(Stream.of(

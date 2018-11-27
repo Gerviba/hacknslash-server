@@ -6,6 +6,11 @@ import hu.gerviba.hacknslash.backend.pathfinder.PathFinder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Mob template. 
+ * Representation of a mob spawning spot.
+ * @author Gergely Szabó
+ */
 @Slf4j
 @Data
 public class MobTemplate {
@@ -26,6 +31,10 @@ public class MobTemplate {
     
     private MobPojo spawnedInstance;
     
+    /**
+     * Spawn new if it is not spawned
+     * @param owner IngameMap
+     */
     public void spawnNew(IngameMap owner) {
         if (spawnedInstance != null) {
             if (spawnedInstance.isAlive())
@@ -38,7 +47,11 @@ public class MobTemplate {
         spawnedInstance.setX(spawnX);
         spawnedInstance.setY(spawnY);
     }
- 
+    
+    /**
+     * Ticks the respawn timer.
+     * @param owner IngameMap
+     */
     public void increaseRespawnTimer(IngameMap owner) {
         ++respawnTimerCounter;
         if (respawnTimerCounter >= respawnTimer) {
@@ -46,7 +59,11 @@ public class MobTemplate {
             spawnNew(owner);
         }
     }
-
+    
+    /**
+     * Recaluclate the shortest path to the nearest player
+     * @param ingameMap IngameMap
+     */
     public void recalculatePaths(IngameMap ingameMap) {
         if (spawnedInstance == null || !spawnedInstance.isAlive())
             return;
@@ -57,6 +74,13 @@ public class MobTemplate {
                         (int) (spawnedInstance.getY() / SIZE_IN_PIXEL))));
     }
 
+    /**
+     * Is the distance is in delta
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param delta Distance allowed
+     * @return true if it is near enough
+     */
     public boolean inDistance(double x, double y, double delta) {
         if (spawnedInstance == null || !spawnedInstance.isAlive())
             return false;
@@ -64,11 +88,16 @@ public class MobTemplate {
                 + (y - spawnedInstance.getY()) * (y - spawnedInstance.getY())) < delta;
     }
 
-    public void damage(int damage) {
+    /**
+     * Damage the spawned mob if possible
+     * @param damage Damage count
+     * @return true if the mob died
+     */
+    public boolean damage(int damage) {
         if (spawnedInstance == null || !spawnedInstance.isAlive())
-            return;
-        System.out.println("I'm just damaged. Uh.");
+            return false;
         spawnedInstance.setHealth(Math.max(0, spawnedInstance.getHealth() - damage));
+        return spawnedInstance.getHealth() == 0;
     }
     
 }
