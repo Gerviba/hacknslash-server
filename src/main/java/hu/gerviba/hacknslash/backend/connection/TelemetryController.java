@@ -15,7 +15,7 @@ import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
 import hu.gerviba.hacknslash.backend.packets.TelemetryUpdatePacket;
-import hu.gerviba.hacknslash.backend.pojo.game.MapPojo;
+import hu.gerviba.hacknslash.backend.pojo.game.IngameMap;
 import hu.gerviba.hacknslash.backend.services.GlobalPacketService;
 import hu.gerviba.hacknslash.backend.services.UserStorageService;
 
@@ -47,7 +47,7 @@ public class TelemetryController {
                 .get(HandshakeValidator.SESSION_ID_ATTRIBUTE));
         packets.sendFullInventoryUpdate(pe);
         
-        MapPojo map = users.getMap(pe.getMap());
+        IngameMap map = users.getMap(pe.getMap());
         map.addPlayer(pe);
         return map.getMapLoadPacket();
     }

@@ -135,10 +135,10 @@ public class PlayerEntity implements Serializable, Principal {
         this.hp = 100;
         this.maxHp = 100;
         this.mana = 20;
-        this.maxMana = 30;
+        this.maxMana = 140;
         this.exp = 0;
         this.money = 0;
-        this.level = 1;
+        this.level = 2;
         this.base = "player_no1";
         this.weapon = "null";
         this.helmet = "null";
@@ -161,7 +161,7 @@ public class PlayerEntity implements Serializable, Principal {
         if (!EXPS_PER_LEVEL.containsKey(level))
             EXPS_PER_LEVEL.put(level, 
                     (int) (((20 * (level + 1)) * (Math.log(level * 2) + 1) * 10) 
-                    / (20 * level + Math.log(x * 2) * 10)));
+                    / (20 * level + Math.log(x * 2) * 10)) + 60);
         return EXPS_PER_LEVEL.get(level);
     }
     

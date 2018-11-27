@@ -8,11 +8,12 @@ import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import hu.gerviba.hacknslash.backend.ConfigProfile;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
-import hu.gerviba.hacknslash.backend.pojo.game.MapPojo;
+import hu.gerviba.hacknslash.backend.pojo.game.IngameMap;
 import hu.gerviba.hacknslash.backend.repos.PlayerRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +25,7 @@ public class UserStorageService {
     private Map<String, PlayerEntity> players = new ConcurrentHashMap<>();
     
     @Autowired
-    ConcurrentHashMap<String, MapPojo> maps;
+    ConcurrentHashMap<String, IngameMap> maps;
     
     @Autowired
     PlayerRepository repo;
@@ -33,7 +34,7 @@ public class UserStorageService {
         return players.get(sessionId);
     }
     
-    public MapPojo getMap(String storeName) {
+    public IngameMap getMap(String storeName) {
         return maps.get(storeName);
     }
     
@@ -55,8 +56,18 @@ public class UserStorageService {
         return players.values();
     }
 
-    public Collection<MapPojo> getMaps() {
+    public Collection<IngameMap> getMaps() {
         return maps.values();
+    }
+    
+    @Scheduled(fixedRate = 1000)
+    public void tickRespawnTimer() {
+        maps.values().forEach(IngameMap::spawnTimerTicks);
+    }
+    
+    @Scheduled(fixedRate = 8000)
+    public void tickRecaluclatePath() {
+        maps.values().forEach(IngameMap::recalculatePaths);
     }
     
     @PreDestroy

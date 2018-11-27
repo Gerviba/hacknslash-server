@@ -21,8 +21,9 @@ PORTALS dungeon1.pt
 LOAD /resources/mobs/skeleton_1.mob 1
 LOAD /resources/things/torch_1.thing 2
 
-# MOB <ID> <X> <Y> <RESAWN> 
-#MOB 1 20 20 20000
+# MOB <NAME> <X> <Y> <DAMAGE> <MAX_HP> <LEVEL> <TEXTURE> <EXP> <RESAWN(in sec)> 
+MOB Bloody_Zombie 19 7 12 40 1 zombie_bloody 6 30
+#MOB Bloody_Zombie 22 5 12 40 1 zombie_bloody 6 30
 
 # OBJ <texture> <x> <y> <anchor(unused)> <action>
 OBJ chest1 20 3 0 add:eye/3

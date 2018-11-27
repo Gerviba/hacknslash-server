@@ -1,5 +1,8 @@
 package hu.gerviba.hacknslash.backend.config;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,6 +17,11 @@ public class GameServerConfig {
     @Bean
     RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+    
+    @Bean
+    ScheduledExecutorService executorService() {
+        return Executors.newSingleThreadScheduledExecutor();
     }
     
 }

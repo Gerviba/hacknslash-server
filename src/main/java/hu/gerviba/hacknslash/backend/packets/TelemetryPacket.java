@@ -42,12 +42,13 @@ public class TelemetryPacket {
     }
     
     @Data
-    public class MobStatus {
-        private long entityId;
-        private String name;
-        private double targetX;
-        private double targetY;
-        private int hp;
+    public static class MobStatus {
+        private final long entityId;
+        private final String name;
+        private final String texture;
+        private final double targetX;
+        private final double targetY;
+        private final float hp;
     }
         
     private List<PlayerModelStatus> players;

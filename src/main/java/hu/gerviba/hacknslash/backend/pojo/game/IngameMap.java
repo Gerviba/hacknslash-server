@@ -12,12 +12,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import hu.gerviba.hacknslash.backend.model.PlayerEntity;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket;
 import hu.gerviba.hacknslash.backend.packets.TelemetryPacket;
+import hu.gerviba.hacknslash.backend.packets.TelemetryPacket.MobStatus;
 import hu.gerviba.hacknslash.backend.packets.TelemetryPacket.PlayerModelStatus;
 import hu.gerviba.hacknslash.backend.pathfinder.PathFinder;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
-public class MapPojo {
+public class IngameMap {
 
     private final String storeName;
     private final String displayName;
@@ -29,9 +31,10 @@ public class MapPojo {
     private final String backgroundColor;
     
     private final Map<String, PlayerEntity> players = new ConcurrentHashMap<>();
-    private final List<MobTemplatePojo> mobs = Collections.synchronizedList(new LinkedList<>());
+    private final List<MobTemplate> mobs = Collections.synchronizedList(new LinkedList<>());
     private final List<StaticObjectPojo> objects = Collections.synchronizedList(new LinkedList<>());
     
+    @Getter
     private PathFinder pathFinder;
     private LinkedList<Long> removedEntities = new LinkedList<>();
     
@@ -42,7 +45,7 @@ public class MapPojo {
                 .collect(Collectors.toList()));
     }
     
-    public void addMobs(List<MobTemplatePojo> mobs) {
+    public void addMobs(List<MobTemplate> mobs) {
         this.mobs.addAll(mobs);
     }
 
@@ -54,6 +57,16 @@ public class MapPojo {
         TelemetryPacket packet = new TelemetryPacket();
         packet.setPlayers(players.values().stream()
                 .map(user -> new PlayerModelStatus(user))
+                .collect(Collectors.toList()));
+        packet.setMobs(mobs.stream()
+                .filter(mob -> mob.getSpawnedInstance() != null)
+                .map(mob -> new MobStatus(
+                        mob.getSpawnedInstance().getEntityId(),
+                        mob.getName(),
+                        mob.getTexture(),
+                        (mob.getSpawnedInstance().getX() + 0.5) * 64,
+                        (mob.getSpawnedInstance().getY() + 0.5) * 64,
+                        (float) (mob.getSpawnedInstance().getHealth() / mob.getMaxHp())))
                 .collect(Collectors.toList()));
         synchronized (removedEntities) {
             packet.setEntityRemove(removedEntities.stream()
@@ -86,7 +99,14 @@ public class MapPojo {
         players.put(pe.getSessionId(), pe);
     }
     
-    // TODO: Allowed Regions (xy -> xy)
+    public void recalculatePaths() {
+//        mobs.forEach(m -> m.recalculatePaths(this));
+    }
+    
+    public void spawnTimerTicks() {
+        mobs.forEach(m -> m.increaseRespawnTimer(this));
+    }
+    
     // TODO: Portals Regions (map, x, y, [server])
     
 }

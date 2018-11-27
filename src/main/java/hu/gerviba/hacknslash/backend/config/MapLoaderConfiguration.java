@@ -22,8 +22,8 @@ import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.LayerType;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.MapLayerInfo;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.MapLayerInfo.BackgroundPart;
 import hu.gerviba.hacknslash.backend.packets.MapLoadPacket.StaticObjectInfo;
-import hu.gerviba.hacknslash.backend.pojo.game.MapPojo;
-import hu.gerviba.hacknslash.backend.pojo.game.MobTemplatePojo;
+import hu.gerviba.hacknslash.backend.pojo.game.IngameMap;
+import hu.gerviba.hacknslash.backend.pojo.game.MobTemplate;
 import hu.gerviba.hacknslash.backend.pojo.game.StaticObjectPojo;
 import hu.gerviba.hacknslash.backend.services.CustomLoggingService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +40,8 @@ public class MapLoaderConfiguration {
     CustomLoggingService logger;
     
     @Bean
-    ConcurrentHashMap<String, MapPojo> mapConfig() {
-        ConcurrentHashMap<String, MapPojo> maps = new ConcurrentHashMap<>();
+    ConcurrentHashMap<String, IngameMap> mapConfig() {
+        ConcurrentHashMap<String, IngameMap> maps = new ConcurrentHashMap<>();
         
         for (File map : new File(resourcesDir, "maps").listFiles()) {
             try {
@@ -53,15 +53,15 @@ public class MapLoaderConfiguration {
             }
         }
         
-        maps.values().forEach(MapPojo::init);
+        maps.values().forEach(IngameMap::init);
         return maps;
     }
 
-    private MapPojo loadMap(String name, File mapFile) throws IOException {
+    private IngameMap loadMap(String name, File mapFile) throws IOException {
         log.info("Loading map: " + name + " (" + mapFile.getAbsolutePath() + ")");
         logger.info("Loading map: " + name);
         List<String> lines = Files.readAllLines(mapFile.toPath(), StandardCharsets.UTF_8);
-        MapPojo map = loadMeta(lines, name);
+        IngameMap map = loadMeta(lines, name);
         
         map.addMobs(loadMobs(lines));
         List<StaticObjectPojo> objects = loadStaticObjects(lines);
@@ -86,7 +86,7 @@ public class MapLoaderConfiguration {
         return map;
     }
 
-    private MapPojo loadMeta(List<String> lines, String name) throws IOException {
+    private IngameMap loadMeta(List<String> lines, String name) throws IOException {
         String displayName = name;
         String texture = "na";
         double spawnX = 0;
@@ -112,7 +112,7 @@ public class MapLoaderConfiguration {
             }
         }
         
-        return new MapPojo(name, displayName, texture, spawnX, spawnY, backgroundColor);
+        return new IngameMap(name, displayName, texture, spawnX, spawnY, backgroundColor);
     }
     
     private MapLoadPacket loadMapLoadPacket(String name, String displayName, 
@@ -193,20 +193,21 @@ public class MapLoaderConfiguration {
                 .collect(Collectors.toList());
     }
     
-    private List<MobTemplatePojo> loadMobs(List<String> lines) {
+    private List<MobTemplate> loadMobs(List<String> lines) {
         return lines.stream()
                 .filter(line -> line.startsWith("MOB "))
-                .map(line -> line.substring(4).split("[ \t]+", 8))
-                .filter(params -> params.length == 8)
-                .map(params -> new MobTemplatePojo(
+                .map(line -> line.substring(4).split("[ \t]+", 9))
+                .filter(params -> params.length == 9)
+                .map(params -> new MobTemplate(
                         params[0].replace('_', ' '), 
                         Double.parseDouble(params[1]), 
                         Double.parseDouble(params[2]), 
-                        Double.parseDouble(params[3]),
-                        Integer.parseInt(params[4]),
-                        params[5],
-                        Integer.parseInt(params[6]),
-                        Integer.parseInt(params[7])))
+                        Double.parseDouble(params[3]), 
+                        Double.parseDouble(params[4]),
+                        Integer.parseInt(params[5]),
+                        params[6],
+                        Integer.parseInt(params[7]),
+                        Integer.parseInt(params[8])))
                 .collect(Collectors.toList());
     }
 

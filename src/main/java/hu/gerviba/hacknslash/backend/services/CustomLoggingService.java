@@ -42,7 +42,7 @@ public class CustomLoggingService {
         pw.close();
     }
     
-    @Scheduled(fixedRate=10000)
+    @Scheduled(fixedRate = 10000)
     public void flushIt() {
         pw.flush();
     }

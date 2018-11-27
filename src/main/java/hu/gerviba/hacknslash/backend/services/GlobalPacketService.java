@@ -22,6 +22,9 @@ public class GlobalPacketService {
     @Autowired
     SimpMessagingTemplate outgoing;
     
+    @Autowired
+    UserStorageService users;
+    
     public void sendSelfUpdate(PlayerEntity pe) {
         outgoing.convertAndSendToUser(pe.getSessionId(), "/topic/self", new SelfInfoUpdatePacket(pe));
     }
@@ -46,6 +49,12 @@ public class GlobalPacketService {
                                         slot.getValue().getItemId(),
                                         slot.getValue().getCount()))
                                 .collect(Collectors.toList())));
+    }
+
+    public void sendMobDamageTo(PlayerEntity pe, double x, double y, int damage) {
+        users.getMap(pe.getMap()).getMobs().stream()
+            .filter(mob -> mob.inDistance(x, y, 0.4))
+            .forEach(mob -> mob.damage(damage));
     }
     
 }
